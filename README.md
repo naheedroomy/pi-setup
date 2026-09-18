@@ -2,6 +2,8 @@
 
 This repository describes and reproduces the Pi setup captured on **2026-09-19**. It is a deployment specification for a human or a setup agent, with copyable configuration and optional helper scripts. It covers Pi, not the earlier OMP/OpenCode installations. The target is a personal Linux workstation using the default `~/.pi/agent` directory.
 
+For a plain-language explanation of the team, model choices and delegation workflow, read [How my Pi subagents work](SUBAGENTS.md).
+
 ## Design and operating contract
 
 Use a concise coordinating parent, retain the stock Pi Subagents role roster, and delegate bounded work when useful. Keep two children active in normal operation. Use cheaper models for routine implementation and exploration, Sol for review/advice, and Gemini Flash for UI/image tasks. Preserve the user's full objective through implementation and verification.
