@@ -1,0 +1,99 @@
+{
+  "captured": "2026-09-19",
+  "pi": "0.85.1",
+  "node": "24.21.0",
+  "codegraph": "1.6.0",
+  "packages": [
+    {
+      "name": "pi-mcp-adapter",
+      "configuredSource": "npm:pi-mcp-adapter@2.33.0",
+      "installedVersion": "2.33.0",
+      "portableSource": "npm:pi-mcp-adapter@2.33.0",
+      "extensionsEnabled": true
+    },
+    {
+      "name": "pi-web-access",
+      "configuredSource": "npm:pi-web-access@0.29.0",
+      "installedVersion": "0.29.0",
+      "portableSource": "npm:pi-web-access@0.29.0",
+      "extensionsEnabled": true
+    },
+    {
+      "name": "pi-subagents",
+      "configuredSource": "npm:pi-subagents@0.67.0",
+      "installedVersion": "0.67.0",
+      "portableSource": "npm:pi-subagents@0.67.0",
+      "extensionsEnabled": true
+    },
+    {
+      "name": "@juicesharp/rpiv-ask-user-question",
+      "configuredSource": "npm:@juicesharp/rpiv-ask-user-question@2.10.1",
+      "installedVersion": "2.10.1",
+      "portableSource": "npm:@juicesharp/rpiv-ask-user-question@2.10.1",
+      "extensionsEnabled": true
+    },
+    {
+      "name": "@juicesharp/rpiv-todo",
+      "configuredSource": "npm:@juicesharp/rpiv-todo@2.10.1",
+      "installedVersion": "2.10.1",
+      "portableSource": "npm:@juicesharp/rpiv-todo@2.10.1",
+      "extensionsEnabled": true
+    },
+    {
+      "name": "pi-lens",
+      "configuredSource": "npm:pi-lens@4.1.6",
+      "installedVersion": "4.1.6",
+      "portableSource": "npm:pi-lens@4.1.6",
+      "extensionsEnabled": true
+    },
+    {
+      "name": "bigpowers",
+      "configuredSource": "npm:bigpowers@2.88.6",
+      "installedVersion": "2.88.6",
+      "portableSource": "npm:bigpowers@2.88.6",
+      "extensionsEnabled": false
+    },
+    {
+      "name": "billion-context-pi",
+      "configuredSource": "npm:billion-context-pi@0.1.70",
+      "installedVersion": "0.1.71",
+      "portableSource": "npm:billion-context-pi@0.1.71",
+      "extensionsEnabled": true
+    },
+    {
+      "name": "pi-antigravity",
+      "configuredSource": "npm:pi-antigravity@0.7.3",
+      "installedVersion": "0.7.3",
+      "portableSource": "npm:pi-antigravity@0.7.3",
+      "extensionsEnabled": true
+    },
+    {
+      "name": "pi-memory",
+      "configuredSource": "npm:pi-memory",
+      "installedVersion": "0.4.2",
+      "portableSource": "npm:pi-memory@0.4.2",
+      "extensionsEnabled": true
+    },
+    {
+      "name": "@narumitw/pi-btw",
+      "configuredSource": "npm:@narumitw/pi-btw",
+      "installedVersion": "0.58.1",
+      "portableSource": "npm:@narumitw/pi-btw@0.58.1",
+      "extensionsEnabled": true
+    },
+    {
+      "name": "pi-continue",
+      "configuredSource": "npm:pi-continue@0.9.3",
+      "installedVersion": "0.9.3",
+      "portableSource": "npm:pi-continue@0.9.3",
+      "extensionsEnabled": false
+    },
+    {
+      "name": "@narumitw/pi-goal",
+      "configuredSource": "npm:@narumitw/pi-goal@0.54.5",
+      "installedVersion": "0.54.5",
+      "portableSource": "npm:@narumitw/pi-goal@0.54.5",
+      "extensionsEnabled": true
+    }
+  ]
+}

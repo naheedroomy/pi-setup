@@ -1,0 +1,27 @@
+{
+  "settings": {
+    "approveTools": false,
+    "directTools": false,
+    "hostConfigDiscovery": "off",
+    "mcpFooterStatus": "compact",
+    "notifyOnStartupConnect": false
+  },
+  "mcpServers": {
+    "codegraph": {
+      "command": "codegraph",
+      "args": [
+        "serve",
+        "--mcp"
+      ],
+      "lifecycle": "lazy"
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest"
+      ],
+      "lifecycle": "lazy"
+    }
+  }
+}

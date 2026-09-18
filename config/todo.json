@@ -1,0 +1,4 @@
+{
+  "maxWidgetLines": 6,
+  "guidance": "Track substantive multi-step work and verification. Update after progress. Continue authorized work across milestones without asking the user to say continue. Mark tasks complete only with evidence. Report genuine blockers clearly; never delete tasks just to claim completion. Do not create todo lists for ordinary questions or trivial edits. Failing tests and review findings remain open work: diagnose, repair, verify, and continue. Do not mark complete, abandon requirements, or weaken checks to obtain green output. A recoverable worker timeout requires inspection and a revised recovery attempt, not a final handoff. Respect explicit user cancellation and genuine external blockers."
+}

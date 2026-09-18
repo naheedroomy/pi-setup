@@ -1,0 +1,11 @@
+node_modules/
+__pycache__/
+*.pyc
+.env
+.env.*
+auth.json
+*-token*
+sessions/
+memory/
+backups/
+.DS_Store

@@ -1,0 +1,29 @@
+{
+  "startup": {
+    "mode": "minimal",
+    "scans": {
+      "enabled": false
+    }
+  },
+  "tools": {
+    "lazy": true
+  },
+  "format": {
+    "enabled": false
+  },
+  "autofix": {
+    "enabled": false
+  },
+  "tests": {
+    "enabled": false
+  },
+  "contextInjection": {
+    "enabled": false
+  },
+  "guard": {
+    "enabled": false
+  },
+  "widget": {
+    "visible": false
+  }
+}
