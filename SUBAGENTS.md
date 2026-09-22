@@ -8,7 +8,7 @@ I use one main agent to own the task, with specialist subagents for bounded piec
 
 I keep Pi Subagents' existing core roles and prompts, then choose models and thinking levels for their jobs. Designer and Observer are the two custom additions. This keeps exploration, research, implementation, review and decision support available without writing a large new prompt framework.
 
-The setup is cost-conscious: routine exploration and implementation go to Luna, review and difficult questions go to Sol, the parent uses Terra, and visual/UI work goes to Gemini Flash. Astra is no longer assigned to Reviewer because its cost was too high for regular reviews.
+The setup is cost-conscious: routine exploration and implementation go to GPT-6 Luna, coordination, review and difficult questions go to GPT-6 Sol, and visual/UI work goes to Gemini Flash. GPT-6 Astra is reserved for explicit escalation on unusually hard bounded tasks rather than a standing role.
 
 ## Intelligence and reasoning allocation
 
@@ -16,18 +16,18 @@ The setup is cost-conscious: routine exploration and implementation go to Luna, 
 
 | Agent | Configured model | Thinking | Why it has this job |
 | --- | --- | --- | --- |
-| Main agent | `openai-codex/gpt-5.6-terra` | high | Owns the overall task, coordinates specialists, integrates results and verifies completion. |
-| Scout | `openai-codex/gpt-5.6-luna` | low | Finds relevant files, symbols and existing patterns quickly; this is the explorer role. |
-| Researcher | `openai-codex/gpt-5.6-luna` | medium | Looks up documentation and external information; this is the librarian role. |
-| Worker | `openai-codex/gpt-5.6-luna` | high | Implements a clearly scoped change, diagnoses failures and runs relevant checks. |
-| Evidence Auditor | `openai-codex/gpt-5.6-sol` | high | Checks whether sources and evidence actually support a claim. |
-| Reviewer | `openai-codex/gpt-5.6-sol` | high | Independently inspects implementation for defects, missed requirements and weak verification. |
-| Oracle | `openai-codex/gpt-5.6-sol` | high | Helps with difficult design decisions, ambiguity and problems that need another approach. |
-| Delegate | `openai-codex/gpt-5.6-terra` | medium | Handles a general bounded assignment that does not fit another specialist. |
+| Main agent | `openai-codex/gpt-6-sol` | medium | Owns the overall task, coordinates specialists, integrates results and verifies completion. |
+| Scout | `openai-codex/gpt-6-luna` | low | Finds relevant files, symbols and existing patterns quickly; this is the explorer role. |
+| Researcher | `openai-codex/gpt-6-luna` | medium | Looks up documentation and external information; this is the librarian role. |
+| Worker | `openai-codex/gpt-6-luna` | high | Implements a clearly scoped change, diagnoses failures and runs relevant checks. |
+| Evidence Auditor | `openai-codex/gpt-6-sol` | high | Checks whether sources and evidence actually support a claim. |
+| Reviewer | `openai-codex/gpt-6-sol` | high | Independently inspects implementation for defects, missed requirements and weak verification. |
+| Oracle | `openai-codex/gpt-6-sol` | high | Helps with difficult design decisions, ambiguity and problems that need another approach. |
+| Delegate | `openai-codex/gpt-6-sol` | medium | Handles a general bounded assignment that does not fit another specialist. |
 | Designer | `antigravity/gemini-3.8-flash` | high | Implements UI using project design guidance and checks the rendered result. |
 | Observer | `antigravity/gemini-3.8-flash` | high | Inspects supplied screenshots/images and reports concrete visual findings. |
 
-The main agent chooses a role based on the work. These mappings do not implement automatic model escalation: asking Oracle for help is a coordination decision, not a guaranteed fallback built into every failed Worker run.
+The main agent chooses a role based on the work. These mappings do not implement automatic model escalation: GPT-6 Astra is an explicit hard-task escalation, and asking Oracle for help is a coordination decision, not a guaranteed fallback built into every failed Worker run.
 
 ## How a task moves through the team
 

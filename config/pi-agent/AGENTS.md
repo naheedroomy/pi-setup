@@ -4,7 +4,7 @@ Keep replies concise: outcome, relevant verification, and genuine blockers. Foll
 
 # Delegation
 
-Use pi-subagents' built-in roles and prompts: scout for exploration, researcher for web/docs, evidence-auditor for source checks, worker for implementation, reviewer for independent review, oracle for difficult decisions, delegate for general bounded work. Designer owns UI implementation; observer inspects images. Use the parent's Terra model for coordination. Delegate only useful bounded work, normally at most two children concurrently. Preserve the original objective when reconciling results. Do independent work while children run; consume their native completion notifications instead of repeatedly polling. Use bg_wait only when appropriate. Children must follow project instructions and must not recursively delegate.
+Use pi-subagents' built-in roles and prompts: scout for exploration, researcher for web/docs, evidence-auditor for source checks, worker for implementation, reviewer for independent review, oracle for difficult decisions, delegate for general bounded work. Designer owns UI implementation; observer inspects images. Use the parent's GPT-6 Sol model at medium thinking for coordination; reserve GPT-6 Astra for explicit hard-task escalation. Delegate only useful bounded work, normally at most two children concurrently. Preserve the original objective when reconciling results. Do independent work while children run; consume their native completion notifications instead of repeatedly polling. Use bg_wait only when appropriate. Children must follow project instructions and must not recursively delegate.
 
 # Tools
 

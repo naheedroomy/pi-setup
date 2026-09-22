@@ -6,7 +6,7 @@ For a plain-language explanation of the team, model choices and delegation workf
 
 ## Design and operating contract
 
-Use a concise coordinating parent, retain the stock Pi Subagents role roster, and delegate bounded work when useful. Keep two children active in normal operation. Use cheaper models for routine implementation and exploration, Sol for review/advice, and Gemini Flash for UI/image tasks. Preserve the user's full objective through implementation and verification.
+Use a concise GPT-6 Sol coordinating parent at medium thinking, retain the stock Pi Subagents role roster, and delegate bounded work when useful. Keep two children active in normal operation. Use GPT-6 Luna for routine implementation and exploration, GPT-6 Sol for review/advice, and Gemini Flash for UI/image tasks. Reserve GPT-6 Astra for explicit hard-task escalation. Preserve the user's full objective through implementation and verification.
 
 The package responsibilities are deliberately separate:
 
@@ -52,18 +52,18 @@ Two source entries were floating (`pi-memory`, `@narumitw/pi-btw`); this guide p
 
 | Role | Provider/model | Thinking | Main responsibility |
 | --- | --- | --- | --- |
-| Parent | `openai-codex/gpt-5.6-terra` | high | Coordination and implementation |
-| scout | `openai-codex/gpt-5.6-luna` | low | Exploration (explorer equivalent) |
-| researcher | `openai-codex/gpt-5.6-luna` | medium | Web/docs (librarian equivalent) |
-| worker | `openai-codex/gpt-5.6-luna` | high | Bounded implementation/fixes |
-| evidence-auditor | `openai-codex/gpt-5.6-sol` | high | Source/evidence checks |
-| reviewer | `openai-codex/gpt-5.6-sol` | high | Independent code review |
-| oracle | `openai-codex/gpt-5.6-sol` | high | Difficult decisions |
-| delegate | `openai-codex/gpt-5.6-terra` | medium | General bounded work |
+| Parent | `openai-codex/gpt-6-sol` | medium | Coordination and implementation |
+| scout | `openai-codex/gpt-6-luna` | low | Exploration (explorer equivalent) |
+| researcher | `openai-codex/gpt-6-luna` | medium | Web/docs (librarian equivalent) |
+| worker | `openai-codex/gpt-6-luna` | high | Bounded implementation/fixes |
+| evidence-auditor | `openai-codex/gpt-6-sol` | high | Source/evidence checks |
+| reviewer | `openai-codex/gpt-6-sol` | high | Independent code review |
+| oracle | `openai-codex/gpt-6-sol` | high | Difficult decisions |
+| delegate | `openai-codex/gpt-6-sol` | medium | General bounded work |
 | designer | `antigravity/gemini-3.8-flash` | high | UI implementation and browser verification |
 | observer | `antigravity/gemini-3.8-flash` | high | Image/screenshot inspection |
 
-Reviewer was deliberately moved off Astra for cost. Do not silently restore Astra or substitute another model. These are the configured identifiers; verify availability in the target account's model catalog before claiming the setup works. Authentication and account entitlement are not transferable configuration.
+GPT-6 Astra is intentionally excluded from the standing roster because it is reserved for explicit hard-task escalation. These are the configured identifiers; verify availability in the target account's model catalog before claiming the setup works. Authentication and account entitlement are not transferable configuration.
 
 Keep the seven stock role definitions from the package and override their settings. Only Designer and Observer are custom Markdown agents. Stock provider/CLI-specific auxiliary agents may also be listed; they are not replacements for this roster and may require separately installed/authenticated CLIs.
 
@@ -140,7 +140,7 @@ Start Pi after applying configuration. Use `/login` and select the OpenAI Codex 
 
 Antigravity authenticates directly with Google through the provider extension's OAuth flow; it does not require Gemini CLI or an external Antigravity CLI. It keeps credentials in Pi's auth store and handles refresh. A suitable Google account and provider access are still required. See the [provider authentication documentation](https://github.com/Rahularya01/pi-antigravity#authentication-and-credential-safety). Never copy another machine's `auth.json` into this repository.
 
-If a configured model is absent, report the exact missing provider/model and resolve account/catalog availability. Do not silently change Gemini Flash, Sol, Luna or Terra to something else.
+If a configured model is absent, report the exact missing provider/model and resolve account/catalog availability. Do not silently change Gemini Flash, GPT-6 Sol, GPT-6 Luna or GPT-6 Astra to something else.
 
 ### 5. Browser and research tools
 
@@ -242,7 +242,7 @@ Keep replies concise: outcome, relevant verification, and genuine blockers. Foll
 
 # Delegation
 
-Use pi-subagents' built-in roles and prompts: scout for exploration, researcher for web/docs, evidence-auditor for source checks, worker for implementation, reviewer for independent review, oracle for difficult decisions, delegate for general bounded work. Designer owns UI implementation; observer inspects images. Use the parent's Terra model for coordination. Delegate only useful bounded work, normally at most two children concurrently. Preserve the original objective when reconciling results. Do independent work while children run; consume their native completion notifications instead of repeatedly polling. Use bg_wait only when appropriate. Children must follow project instructions and must not recursively delegate.
+Use pi-subagents' built-in roles and prompts: scout for exploration, researcher for web/docs, evidence-auditor for source checks, worker for implementation, reviewer for independent review, oracle for difficult decisions, delegate for general bounded work. Designer owns UI implementation; observer inspects images. Use the parent's GPT-6 Sol model at medium thinking for coordination; reserve GPT-6 Astra for explicit hard-task escalation. Delegate only useful bounded work, normally at most two children concurrently. Preserve the original objective when reconciling results. Do independent work while children run; consume their native completion notifications instead of repeatedly polling. Use bg_wait only when appropriate. Children must follow project instructions and must not recursively delegate.
 
 # Tools
 
@@ -366,7 +366,7 @@ Inspect the supplied images and report concrete visual findings relevant to the 
 {
   "theme": "light",
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.6-terra",
+  "defaultModel": "gpt-6-sol",
   "compaction": {
     "enabled": true
   },
@@ -393,11 +393,11 @@ Inspect the supplied images and report concrete visual findings relevant to the 
     },
     "npm:@narumitw/pi-goal@0.54.5"
   ],
-  "defaultThinkingLevel": "high",
+  "defaultThinkingLevel": "medium",
   "subagents": {
     "agentOverrides": {
       "scout": {
-        "model": "openai-codex/gpt-5.6-luna",
+        "model": "openai-codex/gpt-6-luna",
         "thinking": "low",
         "inheritProjectContext": true,
         "allowNestedSubagents": false,
@@ -421,7 +421,7 @@ Inspect the supplied images and report concrete visual findings relevant to the 
         "output": false
       },
       "researcher": {
-        "model": "openai-codex/gpt-5.6-luna",
+        "model": "openai-codex/gpt-6-luna",
         "thinking": "medium",
         "inheritProjectContext": true,
         "allowNestedSubagents": false,
@@ -443,7 +443,7 @@ Inspect the supplied images and report concrete visual findings relevant to the 
         ]
       },
       "evidence-auditor": {
-        "model": "openai-codex/gpt-5.6-sol",
+        "model": "openai-codex/gpt-6-sol",
         "thinking": "high",
         "inheritProjectContext": true,
         "allowNestedSubagents": false,
@@ -465,7 +465,7 @@ Inspect the supplied images and report concrete visual findings relevant to the 
         ]
       },
       "worker": {
-        "model": "openai-codex/gpt-5.6-luna",
+        "model": "openai-codex/gpt-6-luna",
         "thinking": "high",
         "inheritProjectContext": true,
         "allowNestedSubagents": false,
@@ -491,7 +491,7 @@ Inspect the supplied images and report concrete visual findings relevant to the 
         "inheritSkills": true
       },
       "reviewer": {
-        "model": "openai-codex/gpt-5.6-sol",
+        "model": "openai-codex/gpt-6-sol",
         "thinking": "high",
         "inheritProjectContext": true,
         "allowNestedSubagents": false,
@@ -515,7 +515,7 @@ Inspect the supplied images and report concrete visual findings relevant to the 
         "output": false
       },
       "oracle": {
-        "model": "openai-codex/gpt-5.6-sol",
+        "model": "openai-codex/gpt-6-sol",
         "thinking": "high",
         "inheritProjectContext": true,
         "allowNestedSubagents": false,
@@ -539,7 +539,7 @@ Inspect the supplied images and report concrete visual findings relevant to the 
         "output": false
       },
       "delegate": {
-        "model": "openai-codex/gpt-5.6-terra",
+        "model": "openai-codex/gpt-6-sol",
         "thinking": "medium",
         "inheritProjectContext": true,
         "allowNestedSubagents": false,
