@@ -1,7 +1,7 @@
 {
   "theme": "light",
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-6-sol",
+  "defaultModel": "gpt-6.1-sol",
   "compaction": {
     "enabled": true
   },
@@ -78,8 +78,8 @@
         ]
       },
       "evidence-auditor": {
-        "model": "openai-codex/gpt-6-sol",
-        "thinking": "high",
+        "model": "openai-codex/gpt-6.1-sol",
+        "thinking": "medium",
         "inheritProjectContext": true,
         "allowNestedSubagents": false,
         "extensions": [
@@ -126,7 +126,7 @@
         "inheritSkills": true
       },
       "reviewer": {
-        "model": "openai-codex/gpt-6-sol",
+        "model": "openai-codex/gpt-6.1-sol",
         "thinking": "high",
         "inheritProjectContext": true,
         "allowNestedSubagents": false,
@@ -150,7 +150,7 @@
         "output": false
       },
       "oracle": {
-        "model": "openai-codex/gpt-6-sol",
+        "model": "openai-codex/gpt-6.1-sol",
         "thinking": "high",
         "inheritProjectContext": true,
         "allowNestedSubagents": false,
@@ -174,7 +174,7 @@
         "output": false
       },
       "delegate": {
-        "model": "openai-codex/gpt-6-sol",
+        "model": "openai-codex/gpt-6.1-sol",
         "thinking": "medium",
         "inheritProjectContext": true,
         "allowNestedSubagents": false,
