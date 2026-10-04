@@ -1,6 +1,6 @@
 {
   "captured": "2026-10-04",
-  "pi": "0.87.1",
+  "pi": "1.0.2",
   "node": "24.21.0",
   "codegraph": "1.6.0",
   "packages": [
@@ -13,30 +13,30 @@
     },
     {
       "name": "pi-web-access",
-      "configuredSource": "npm:pi-web-access@0.29.0",
-      "installedVersion": "0.29.0",
-      "portableSource": "npm:pi-web-access@0.29.0",
+      "configuredSource": "npm:pi-web-access@0.35.0",
+      "installedVersion": "0.35.0",
+      "portableSource": "npm:pi-web-access@0.35.0",
       "extensionsEnabled": true
     },
     {
       "name": "pi-subagents",
-      "configuredSource": "npm:pi-subagents@0.67.0",
-      "installedVersion": "0.67.0",
-      "portableSource": "npm:pi-subagents@0.67.0",
+      "configuredSource": "npm:pi-subagents@0.75.0",
+      "installedVersion": "0.75.0",
+      "portableSource": "npm:pi-subagents@0.75.0",
       "extensionsEnabled": true
     },
     {
       "name": "@juicesharp/rpiv-ask-user-question",
-      "configuredSource": "npm:@juicesharp/rpiv-ask-user-question@2.10.1",
-      "installedVersion": "2.10.1",
-      "portableSource": "npm:@juicesharp/rpiv-ask-user-question@2.10.1",
+      "configuredSource": "npm:@juicesharp/rpiv-ask-user-question@2.12.0",
+      "installedVersion": "2.12.0",
+      "portableSource": "npm:@juicesharp/rpiv-ask-user-question@2.12.0",
       "extensionsEnabled": true
     },
     {
       "name": "@juicesharp/rpiv-todo",
-      "configuredSource": "npm:@juicesharp/rpiv-todo@2.10.1",
-      "installedVersion": "2.10.1",
-      "portableSource": "npm:@juicesharp/rpiv-todo@2.10.1",
+      "configuredSource": "npm:@juicesharp/rpiv-todo@2.12.0",
+      "installedVersion": "2.12.0",
+      "portableSource": "npm:@juicesharp/rpiv-todo@2.12.0",
       "extensionsEnabled": true
     },
     {
@@ -82,10 +82,10 @@
       "extensionsEnabled": false
     },
     {
-      "name": "@narumitw/pi-goal",
-      "configuredSource": "npm:@narumitw/pi-goal@0.54.5",
-      "installedVersion": "0.54.5",
-      "portableSource": "npm:@narumitw/pi-goal@0.54.5",
+      "name": "pi-goal-x",
+      "configuredSource": "npm:pi-goal-x@0.32.3",
+      "installedVersion": "0.32.3",
+      "portableSource": "npm:pi-goal-x@0.32.3",
       "extensionsEnabled": true
     },
     {

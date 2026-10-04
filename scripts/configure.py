@@ -50,7 +50,7 @@ def main():
                 new = merge(old, new)
                 if dest == agent / 'settings.json':
                     managed = {package_name(p) for p in new['packages']}
-                    retired = {'bigpowers'}
+                    retired = {'bigpowers', '@narumitw/pi-goal'}
                     new['packages'] += [p for p in old.get('packages', [])
                                         if package_name(p) not in managed | retired]
             text = json.dumps(new, indent=2) + '\n'

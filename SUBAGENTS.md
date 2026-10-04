@@ -81,15 +81,15 @@ Each supporting package has a distinct job:
 | RPIV Todo | Track the substantive tasks and required verification. |
 | Billion Context Pi | Compress and retrieve conversation context during long work. Its own delegation is disabled. |
 | Pi Memory | Store durable facts and notes across sessions; its scratchpad is not the main task list. |
-| Pi Goal | Continue an explicitly activated session objective when Pi becomes idle. |
+| Pi Goal X | Plan and continue explicit goals; track evidence and optionally audit completion. |
 
-A Todo list does not itself force continuation. For sustained work, start `/goal <objective and acceptance criteria>`. The parent should keep todos synchronized with that goal and only record completion after the required work and verification are done.
+A Todo list does not itself force continuation. For sustained work, start `/goal <idea>` and confirm its draft, or use `/goal-direct <objective>` for an already agreed objective. Keep Goal X tasks/evidence and any separate Todo list aligned; record completion only after required verification.
 
-Goal is configured for 100 automatic model responses and a repeated-no-progress guard. It is not loaded into children. The parent is responsible for coordinating the whole objective; every child does not run its own independent Goal loop.
+Goal X is configured for 100 extension-started autonomous runs, not 100 individual model responses. The old repeated-no-progress guard does not carry over. Goal X is not loaded into children; the parent coordinates the full objective.
 
-When only an external/subagent result remains, the parent is instructed to use `goal_wait` with the run ID and a fallback wake deadline. This reduces the chance of waiting indefinitely if a notification is missed. The deadline policy is guidance, not a code patch that mechanically inserts a timer into every wait call.
+When only a subagent result remains, the parent relies on native completion notifications rather than the removed `goal_wait` tool. Goal X's explicit scheduled waits require an opt-in execution contract and are not needed for ordinary child completion.
 
-The desired behavior is persistent repair and verification within authorized scope. The actual system can still pause for limits, errors, missing credentials, genuine external blockers or cancellation. Goal and Todo are not hard acceptance gates, and a model can misjudge completion. Required tests and other concrete evidence remain essential.
+The desired behavior is persistent repair and verification within authorized scope. The actual system can still pause for limits, errors, missing credentials, genuine external blockers or cancellation. Optional auditing and Todo are not hard acceptance gates; required tests and concrete evidence remain essential.
 
 ## What I intentionally avoid
 

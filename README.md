@@ -13,7 +13,7 @@ The package responsibilities are deliberately separate:
 - **Pi Subagents** dispatches children; Billion Context's separate delegation is disabled.
 - **RPIV Todo** is the task tracker. Memory's scratchpad is not the authoritative task list.
 - **Billion Context Pi (ACP)** owns context compression. Native compaction remains enabled as a fallback if ACP is removed.
-- **Pi Goal** drives explicit session objectives and continuation. It does not enforce test success or independently audit every completion claim.
+- **Pi Goal X** drives explicit goals, persistent tasks, continuation, and optional independent completion auditing. Tests and acceptance criteria still need real evidence.
 - **MCP Adapter** supplies lazy CodeGraph/Playwright tools. Web Access supplies research tools.
 - **Lens** supplies diagnostics on demand; startup scans, autoformat, autofix, automatic tests and its guard are disabled.
 - **Ponytail** encourages minimal, correct changes. Its Pi extension injects the active mode into the parent prompt; use `/ponytail lite|full|ultra|off` to adjust it. It does not replace project requirements or verification.
@@ -22,7 +22,7 @@ This configuration avoids routine tool-approval prompts. It does not bypass prov
 
 ## Runtime and reproducibility
 
-Observed runtime: Node.js **24.21.0**, Pi (`@earendil-works/pi-coding-agent`) **0.87.1**, CodeGraph (`@colbymchenry/codegraph`) **1.6.0**, Python 3 for the helper scripts. `git` is useful for project workflows; `gh` is needed only for GitHub work.
+Observed runtime: Node.js **24.21.0**, Pi (`@earendil-works/pi-coding-agent`) **1.0.2**, CodeGraph (`@colbymchenry/codegraph`) **1.6.0**, Python 3 for the helper scripts. `git` is useful for project workflows; `gh` is needed only for GitHub work.
 
 Use the versions below for the closest reproduction. This is a top-level package snapshot, **not a full dependency lock or a guarantee of future provider availability**. Transitive dependencies and Playwright's `@latest` MCP command can change. Record intentional upgrades and rerun validation.
 
@@ -33,10 +33,10 @@ Two source entries were floating (`pi-memory`, `@narumitw/pi-btw`); this guide p
 | Package | Version | Activation and purpose |
 | --- | --- | --- |
 | `pi-mcp-adapter` | 2.33.0 | Active; lazy MCP discovery and calls |
-| `pi-web-access` | 0.29.0 | Active; search, fetch and source checks |
-| `pi-subagents` | 0.67.0 | Active; stock role prompts, async children and supervision |
-| `@juicesharp/rpiv-ask-user-question` | 2.10.1 | Active; structured questions for material decisions |
-| `@juicesharp/rpiv-todo` | 2.10.1 | Active; one substantive task list |
+| `pi-web-access` | 0.35.0 | Active; search, fetch and source checks |
+| `pi-subagents` | 0.75.0 | Active; stock role prompts, async children and supervision |
+| `@juicesharp/rpiv-ask-user-question` | 2.12.0 | Active; structured questions for material decisions |
+| `@juicesharp/rpiv-todo` | 2.12.0 | Active; one substantive task list |
 | `pi-lens` | 4.1.6 | Active; diagnostics loaded on demand |
 | `ponytail` | git tag `v4.10.3` | Active; minimal implementation guidance and review commands |
 | `billion-context-pi` | 0.1.71 | Active; context compression and retrieval |
@@ -44,9 +44,9 @@ Two source entries were floating (`pi-memory`, `@narumitw/pi-btw`); this guide p
 | `pi-memory` | 0.4.2 | Active; durable memory and scratchpad |
 | `@narumitw/pi-btw` | 0.58.1 | Active; temporary side conversations |
 | `pi-continue` | 0.9.3 | Installed but inactive; `extensions: []` |
-| `@narumitw/pi-goal` | 0.54.5 | Active; explicit goal continuation |
+| `pi-goal-x` | 0.32.3 | Active; explicit goal planning, continuation and optional auditing |
 
-`pi-continue` requires native compaction and is excluded while ACP owns compression; keep its `extensions: []` filter. GSD and Bigpowers are not part of this setup. Superpowers, Ralph loops, Pi Til Done and a standalone background-tasks package are **not installed** in this snapshot. Native Subagents completion notifications handle child waits. Ponytail's git tag is pinned; update it intentionally rather than tracking the repository's moving default branch.
+`pi-continue` requires native compaction and is excluded while ACP owns compression; keep its `extensions: []` filter. GSD and Bigpowers are not part of this setup. Superpowers, Ralph loops, Pi Til Done and a standalone background-tasks package are **not installed** in this snapshot. Native Subagents completion notifications handle child waits. Ponytail's git tag is pinned; update it intentionally rather than tracking the repository's moving default branch. Pi 1.0 removed `@earendil-works/pi-agent-core/node`; Subagents 0.75.0 makes that child-runner alias optional. Older Subagents (including 0.67.0) fails before launching background reviews on Pi 1.0. The three updated Web Access/RPIV packages and Subagents declare the host's `typebox` as a peer dependency.
 
 ## Models and agents
 
@@ -86,7 +86,7 @@ from datetime import datetime
 import shutil
 home = Path.home()
 backup = home / '.pi' / ('before-pi-setup-' + datetime.now().strftime('%Y%m%d-%H%M%S'))
-for relative in ['.pi/agent/settings.json', '.pi/agent/AGENTS.md', '.pi/agent/agents', '.pi/agent/extensions/subagent/config.json', '.pi/agent/mcp.json', '.pi/agent/pi-goal.json', '.pi/acp.json', '.pi-lens/config.json', '.config/rpiv-todo/config.json']:
+for relative in ['.pi/agent/settings.json', '.pi/agent/AGENTS.md', '.pi/agent/agents', '.pi/agent/extensions/subagent/config.json', '.pi/agent/mcp.json', '.pi/agent/pi-goal-x-settings.json', '.pi/acp.json', '.pi-lens/config.json', '.config/rpiv-todo/config.json']:
     source = home / relative
     if not source.exists():
         continue
@@ -107,7 +107,7 @@ Do not export auth stores, sessions, memory contents, MCP caches, trust decision
 With Node 24.21.0 selected using your normal Node installation/version manager:
 
 ```bash
-npm install -g --ignore-scripts @earendil-works/pi-coding-agent@0.87.1
+npm install -g --ignore-scripts @earendil-works/pi-coding-agent@1.0.2
 npm install -g @colbymchenry/codegraph@1.6.0
 pi --version
 codegraph --version
@@ -128,7 +128,7 @@ python3 scripts/configure.py --apply        # Apply paths, filters and role over
 
 Do not launch an interactive Pi task between installing packages and applying configuration: the package filters must be in place first. If installation fails partway, resolve that failure, rerun installation, then apply configuration. The installation script uses the official `pi install` command from your home directory and stops at the first failure. It does not upgrade the runtime, configure external CLI tools, authenticate, or run project tasks.
 
-The configuration script expands `__PI_AGENT_DIR__` into the target absolute path, merges JSON mappings, replaces managed arrays/settings, replaces managed package versions by package identity (including git tags), retires Bigpowers, and retains unrelated packages. It backs up overwritten files with a manifest under `~/.pi/agent/backups/pi-setup-*`. Existing global AGENTS text is retained outside a managed section; existing custom Designer/Observer definitions are backed up and replaced. Inspect conflicting retained instructions, role overrides and unrelated extensions; preserving them does not establish compatibility. Existing extra keys inside managed role objects remain because JSON merging is recursive.
+The configuration script expands `__PI_AGENT_DIR__` into the target absolute path, merges JSON mappings, replaces managed arrays/settings, replaces managed package versions by package identity (including git tags), retires Bigpowers and the previous `@narumitw/pi-goal` package, and retains unrelated packages. The former `pi-goal.json` is not used by Goal X; the helper does not delete it or migrate old goal state. Back up or archive old goals separately before uninstalling if you need them. It backs up overwritten files with a manifest under `~/.pi/agent/backups/pi-setup-*`. Existing global AGENTS text is retained outside a managed section; existing custom Designer/Observer definitions are backed up and replaced. Inspect conflicting retained instructions, role overrides and unrelated extensions; preserving them does not establish compatibility. Existing extra keys inside managed role objects remain because JSON merging is recursive.
 
 For a preview/fixture targeting another home directory, use `--home /path/to/home`. This only changes configuration destinations; the install script uses the actual user environment. The helper does not make a multi-file atomic transaction; its backups support recovery if a write fails.
 
@@ -146,7 +146,7 @@ If a configured model is absent, report the exact missing provider/model and res
 
 Playwright is configured as a lazy local MCP server using `npx -y @playwright/mcp@latest`. First use downloads the server and may need browser/system dependencies. Try navigating to `about:blank` and closing the browser through MCP. If the server reports a missing browser, use its browser-install tool when available or follow the matching [Playwright MCP installation instructions](https://github.com/microsoft/playwright-mcp). The browser version must match the MCP runtime; do not assume a random globally installed Playwright browser is sufficient.
 
-`approveTools: false` removes adapter tool approvals, `directTools: false` keeps discovery behind the `mcp` gateway, and `hostConfigDiscovery: off` prevents accidental import of another agent's MCP configuration. Lazy startup avoids paying server startup cost for tasks that never use them.
+`approveTools: false` removes adapter tool approvals, `directTools: false` keeps discovery behind the `mcp` gateway, and `hostConfigDiscovery: off` prevents accidental import of another agent's MCP configuration. Pi 1.0's built-in MCP also registers `/mcp`; the template explicitly disables it with `"extensions": ["-builtin:mcp"]` so only the configured adapter owns that command. Do not enable both without choosing which server configuration to use. Lazy startup avoids paying server startup cost for tasks that never use them.
 
 Web Access exposes `web_search`, `fetch_content`, `get_search_content`, and `source_check`; available search backends can have different account/API requirements. The original setup's keyless search and page extraction were tested; no API secrets are included here.
 
@@ -160,37 +160,37 @@ BTW uses `/btw <question>` for a temporary side conversation. No custom `pi-btw.
 
 ## Using autonomous work
 
-Start an explicit objective in Pi:
+Start a guided goal and confirm the draft before it begins:
 
 ```text
-/goal Implement the agreed feature, fix verification failures, and complete all acceptance criteria in SPEC.md. Keep the todo list current and verify the result.
+/goal Implement the agreed feature, fix verification failures, and complete all acceptance criteria in SPEC.md.
 ```
 
-Normal prompts do not activate Goal mode. An existing task list alone does not enable continuation. Prefer an objective that names the actual specification and scope rather than just “resume.” Use `/goal status`, `/goal pause`, `/goal resume`, and `/goal clear` to inspect/manage it. A misspelled slash command can reach the model as plain chat instead of controlling the extension; verify the Goal status.
+For an already agreed objective without drafting, use `/goal-direct <objective>`. Normal chat and an existing Todo list do not activate Goal mode. Use `/goal-status`, `/goal-pause`, `/goal-resume`, and `/goal-clear` for lifecycle management. `/goal` without draft confirmation is not an active goal; verify status. The old `@narumitw/pi-goal` commands and `goal_complete`/`goal_wait` tools do not apply to Pi Goal X.
 
-The configuration allows **100 automatic model responses**, including responses inside tool loops, and **3 repeated no-progress runs**. These are finite safeguards, not a cost cap or a guarantee of completion. Goal can also stop for provider failures, explicit cancellation, real blockers and budget limits. `rpc.enabled: false` leaves extension-managed Goal starts disabled. See the [Goal documentation](https://github.com/narumiruna/pi-extensions/tree/main/packages/pi-goal).
+`pi-goal-x-settings.json` caps **extension-started autonomous runs at 100**. This is not the old extension's 100 model responses: tool loops and external turns are outside this allowance. The old three-no-progress-run guard has no equivalent here. Goal X can also stop for provider failures, explicit cancellation, real blockers and token budgets. Its independent completion auditor is optional, and even approval is not a substitute for running checks. See the [Pi Goal X documentation](https://github.com/tmonk/pi-goal-x).
 
 Expected behavior:
 
-1. Derive requirements, create/update RPIV todos, implement and verify.
+1. Derive requirements, maintain Goal X tasks/evidence and synchronize any separate RPIV todos, then implement and verify.
 2. Treat failing tests/review findings as unfinished work; diagnose, repair and retest without needing another user prompt.
 3. Preserve substantive requirements; never delete tasks, weaken tests or remove functionality just to claim success.
 4. Use bounded subagents; inspect partial changes after timeout, confirm the previous writer stopped, then recover with a revised approach.
-5. Continue independent work while children run. When only a native completion remains, `goal_wait` includes the run ID and a fallback deadline: child time remaining plus 60 seconds, or 1,860,000 ms if unknown.
-6. On a fallback wake, inspect once and recover stale work or wait for demonstrably active work. Do not busy-poll or start a competing writer.
-7. Call `goal_complete` only with evidence for the original objective and all required verification. Honor explicit cancellation and real external dependencies.
+5. Continue independent work while children run; rely on native child-completion notifications, not polling or the removed `goal_wait` tool.
+6. On child failure or deadline, inspect status and partial work once, then recover or wait for demonstrably active work. Do not start a competing writer.
+7. Use `update_goal` to claim completion only with evidence for the full objective and required verification. Honor independent auditor feedback, explicit cancellation and real external dependencies.
 
-The fallback-wait behavior is instruction-level policy, not an automatic patch that adds deadlines to every tool call. A parent that displays a final-looking status while its child runs may be waiting correctly. Inspect `/goal status` and the child status before assuming it has stopped.
+`update_goal` wait declarations require opting into `strictExecutionContract`; the default goal continuation requires no explicit ready/wait call. Inspect `/goal-status` and child status if work appears stalled.
 
 Top-level Subagents runs are forced async for this MCP/provider configuration. `parallel.concurrency: 2`, `globalConcurrencyLimit: 2` and two active async runs are different limits; they are not a proven machine-wide maximum of two OS processes. Default worker timeout is 30 minutes, but a particular workflow may choose a shorter deadline.
 
-Do not enable Pi Continue alongside ACP. Do not add another auto-continuation engine as a presumed fix. Ralph was researched but not installed: it can supply stronger command-based acceptance gates, but the candidate's fresh children disable ambient extension discovery, so this stack would need deliberate integration. Neither Goal nor Todo guarantees “never stop until everything is complete”; explicit checks and honest blocker reporting remain necessary.
+Do not enable Pi Continue alongside ACP. Do not add another auto-continuation engine as a presumed fix. Ralph was researched but not installed: it can supply stronger command-based acceptance gates, but the candidate's fresh children disable ambient extension discovery, so this stack would need deliberate integration. Neither Goal X nor Todo guarantees “never stop until everything is complete”; explicit checks and honest blocker reporting remain necessary.
 
 ## Acceptance checklist for the setup agent
 
 Use a temporary fixture project for write/tool tests, not production data. Do not start the user's actual implementation objective as a setup test.
 
-- `pi --version` is 0.87.1, `pi list` contains the captured packages, and every managed JSON file parses.
+- `pi --version` is 1.0.2, `pi list` contains the captured packages, and every managed JSON file parses.
 - Restart Pi and confirm no extension-loading errors. A Python/configuration check alone is not runtime validation.
 - Inspect Subagents through its `subagent` tool (`action: "list", capabilities: true`); confirm all seven stock mappings plus Designer/Observer, thinking levels, tools and resolved extension paths. Use its doctor capability to diagnose launch issues when exposed by the installed version.
 - Parent can access Todo, structured questions, `mcp`, web tools, ACP, `subagent`, Memory, Goal and `/ponytail`. `acp_delegate` must not be active; GSD and Bigpowers must not load. `/btw` should register.
@@ -199,10 +199,10 @@ Use a temporary fixture project for write/tool tests, not production data. Do no
 - Create, update and complete a disposable Todo in a throwaway session.
 - Launch one bounded scout to read a harmless fixture and return a known marker. Verify native async completion and exit status, not just “launched.” Inspect reviewer capabilities without paying for a full review. Test Designer/Observer only once provider login and model availability are established.
 - In a disposable conversation, test ACP compress/decompress and confirm retrieval of the original text. Do not compress an unrelated user's live work for testing.
-- For Goal, use a disposable test fixture: a check initially fails, the agent repairs it, reruns it, updates the todo and records completion. Exercise pause/resume and a bounded external wait. Record whether this is a simulated or live-provider test. Do not claim long-running compatibility based only on tool registration.
+- For Goal X, use a disposable fixture and `/goal-direct`: initially fail a check, repair it, rerun it, record task evidence, and request audited completion. Exercise `/goal-pause` and `/goal-resume` in a separate bounded fixture; only test scheduled waits if you intentionally enable `strictExecutionContract`. Do not claim long-running compatibility based only on tool registration.
 - Report changed files, installed/observed versions, exact checks performed, failures, and any account-dependent work still required.
 
-Historical validation on the source workstation (before the 2026-10-04 Ponytail swap): zero extension-loader errors; native async scout runs returned the expected marker; MCP/browser/web/Todo and synthetic ACP checks passed. Upstream Goal runtime smoke tests passed against installed Pi for continuation, queued input, pause, limits, retries and native compaction. Later session evidence showed Goal automatically continued and woke around async child work. This is not exhaustive live validation of ACP + Goal + all providers, or proof that every long task completes. The 0.1.71 ACP drift was observed during this documentation pass, not separately retested end-to-end.
+Historical validation on the source workstation before the Goal X swap: zero extension-loader errors; native async scout runs returned the expected marker; MCP/browser/web/Todo and synthetic ACP checks passed. The former `@narumitw/pi-goal` had upstream smoke tests and observed continuation around child work; this evidence **does not validate Pi Goal X**. Goal X still needs a live goal-cycle test in a disposable session. The 0.1.71 ACP drift was observed during the original documentation pass, not separately retested end-to-end.
 
 ## Troubleshooting
 
@@ -210,10 +210,11 @@ Historical validation on the source workstation (before the 2026-10-04 Ponytail 
 | --- | --- |
 | Plain “Continuing” reply, then silence | Inspect Goal status and active child; a task prompt is not `/goal` |
 | Goal inactive/blocked after an error | Read the error; fix recoverable cause and explicitly resume; do not override user cancellation |
-| Goal paused at 100 responses | Inspect progress using `/goal`; resume deliberately after review |
-| Parent waiting indefinitely | Inspect child status and whether `goal_wait` had a fallback deadline; recover the actual failed run |
+| Goal paused at 100 autonomous runs | Inspect `/goal-status`, review progress, and deliberately use `/goal-resume` to renew the allowance |
+| Parent waiting indefinitely | Inspect child status and native completion notifications; recover the actual failed run |
 | Test failures reported as final | Keep failed checks on Todo and resume the full objective; instructions are not a hard acceptance gate |
 | Missing MCP tools in children | Verify absolute paths, explicit extension lists, tools and forced async mode |
+| Background children fail on `@earendil-works/pi-agent-core/node` | Pi 1.0 removed this export; use Subagents 0.75.0 or newer, then verify with a fresh child launch |
 | Child cannot write its requested output file | Check role output/tool settings; do not enable write everywhere by default |
 | Gemini missing/auth failure | `/login antigravity`, `/antigravity.doctor`, inspect exact model catalog |
 | CodeGraph spawn fails | Check inherited PATH and external CLI installation |
@@ -254,17 +255,15 @@ Ponytail encourages the smallest correct implementation: reuse existing code and
 
 Billion Context Pi owns context compression; use compress/decompress/search_context/acp_status for long sessions. Its delegation feature is disabled: use pi-subagents for delegation. Preserve task status, decisions and verification evidence when compressing.
 
-# Goal continuation
+# Goal continuation (pi-goal-x)
 
-For sustained autonomous work, the user starts `/goal <objective>`. Ordinary prompts do not activate Goal mode. While a goal is active, keep the existing todo list synchronized with its full scope and verification requirements. Call goal_complete only after the original objective and all required work are verified complete. Milestones and statements such as "Continuing" are not completion.
+For sustained autonomous work, the user starts `/goal <idea>` and confirms its proposed plan, or explicitly starts `/goal-direct <objective>` without drafting. Ordinary prompts and a Todo list do not activate Goal mode. Check `/goal-status` or `get_goal` before acting on a goal; respect its current ID and lifecycle. Track the original objective, requirements, task evidence, and verification; keep any separate Pi Todo list synchronized. Report completion through `update_goal` only when all requirements are verified; completion may be independently audited. Never substitute a milestone or a "Continuing" message for completion evidence.
 
-While subagents run, continue useful independent work. If only an external result remains, use goal_wait after arranging its native completion notification; state the wake source and next action. Waiting for a child is not a goal_blocked condition. Respect explicit pause, safety-limit and blocker states; do not restart stopped goals or bypass their limits.
+Continue useful independent work while subagents run. If only a native child result remains, rely on its completion notification and return control; do not busy-poll or invent a `goal_wait` call. `update_goal` waits require the optional `strictExecutionContract` setting; do not enable it just to wait for a child. Waiting for a child is not a blocked goal. Respect `/goal-pause`, autonomous-run/token limits, real blockers and explicit cancellation; never restart stopped goals without authorization.
 
 # Failure recovery during active goals
 
-Failing tests, lint errors, review findings, and incomplete implementation are remaining work: diagnose, fix, rerun the relevant checks, then advance to the next open todo. Do not weaken tests, remove requirements or roll back required functionality merely to obtain green output. Keep verification failures open in todo until resolved with evidence. After a worker timeout or recoverable failure, inspect its partial diff and diagnostics, confirm the previous writer has stopped, then narrow the task or change the approach before retrying. Do not launch competing writers. Honor explicit user cancellation; never reinterpret it as permission to restart.
-
-When goal_wait is needed for a native subagent completion, include the run ID in the reason and set resume_after_ms to the known remaining worker deadline plus 60 seconds (use 1860000 if no deadline is known). This is a fallback for a missing notification, not a frequent polling loop. On a deadline wake, inspect the run once; recover a failed/stale run or arrange a new bounded wait if it is demonstrably progressing. Never report completion while required todos or verification failures remain. If Goal mode is inactive because a command was misspelled or an operation was aborted, state that explicitly instead of promising autonomous continuation.
+Failing tests, lint errors, review findings, and incomplete implementation are remaining work: diagnose, fix, rerun the relevant checks, then advance to the next open task. Do not weaken tests, remove requirements or roll back required functionality merely to obtain green output. Keep verification failures open until resolved with evidence. After a worker timeout or recoverable failure, inspect its partial diff and diagnostics, confirm the previous writer has stopped, then narrow the task or change the approach before retrying. Do not launch competing writers. Honor explicit user cancellation; never reinterpret it as permission to restart. If Goal mode is inactive because a command was misspelled or a draft was not confirmed, state that explicitly rather than promising autonomous continuation.
 ```
 
 ### `~/.pi/agent/agents/designer.md`
@@ -346,17 +345,11 @@ Inspect the supplied images and report concrete visual findings relevant to the 
 }
 ```
 
-### `~/.pi/agent/pi-goal.json`
+### `~/.pi/agent/pi-goal-x-settings.json`
 
 ```json
 {
-  "continuationLimits": {
-    "automaticTurns": 100,
-    "noProgressTurns": 3
-  },
-  "rpc": {
-    "enabled": false
-  }
+  "maxAutonomousRuns": 100
 }
 ```
 
@@ -372,12 +365,13 @@ Inspect the supplied images and report concrete visual findings relevant to the 
   },
   "tuiMode": "regular",
   "enableSkillCommands": true,
+  "extensions": ["-builtin:mcp"],
   "packages": [
     "npm:pi-mcp-adapter@2.33.0",
-    "npm:pi-web-access@0.29.0",
-    "npm:pi-subagents@0.67.0",
-    "npm:@juicesharp/rpiv-ask-user-question@2.10.1",
-    "npm:@juicesharp/rpiv-todo@2.10.1",
+    "npm:pi-web-access@0.35.0",
+    "npm:pi-subagents@0.75.0",
+    "npm:@juicesharp/rpiv-ask-user-question@2.12.0",
+    "npm:@juicesharp/rpiv-todo@2.12.0",
     "npm:pi-lens@4.1.6",
     "npm:billion-context-pi@0.1.71",
     "npm:pi-antigravity@0.7.3",
@@ -387,7 +381,7 @@ Inspect the supplied images and report concrete visual findings relevant to the 
       "source": "npm:pi-continue@0.9.3",
       "extensions": []
     },
-    "npm:@narumitw/pi-goal@0.54.5",
+    "npm:pi-goal-x@0.32.3",
     "git:github.com/DietrichGebert/ponytail@v4.10.3"
   ],
   "defaultThinkingLevel": "medium",
@@ -632,11 +626,11 @@ These links document the package behavior; the local snapshot and pinned templat
 - [Billion Context Pi](https://github.com/ranxianglei/billion-context-pi)
 - [Antigravity](https://github.com/Rahularya01/pi-antigravity)
 - [Memory](https://github.com/jayzeng/pi-memory)
-- [Goal / BTW](https://github.com/narumiruna/pi-extensions)
+- [Pi Goal X](https://github.com/tmonk/pi-goal-x) and [BTW](https://github.com/narumiruna/pi-extensions)
 - [Pi Continue (inactive)](https://github.com/Tiziano-AI/pi-continue)
 - [CodeGraph](https://github.com/colbymchenry/codegraph)
 - [Playwright MCP](https://github.com/microsoft/playwright-mcp)
 
 ## Repository validation record
 
-On 2026-09-19, the configuration helper was exercised against a temporary home directory, including a path containing spaces. Fresh application, repeated application, preservation of unrelated settings/packages and global guidance, replacement of managed package versions, activation filters, absolute-path substitution, and backup manifests passed. All JSON templates and JSON Markdown blocks parsed; the appendix matched every configuration template. A basic known-token/private-key and source-home-path scan passed. The package installation helper was previewed, not executed against a second workstation; Ponytail installation and GSD/Bigpowers removal were performed on the source machine on 2026-10-04. No credentials, memory files, session history or project data were copied. These checks establish configuration portability, not authenticated end-to-end behavior on a new account.
+On 2026-09-19, the configuration helper was exercised against a temporary home directory, including a path containing spaces. Fresh application, repeated application, preservation of unrelated settings/packages and global guidance, replacement of managed package versions, activation filters, absolute-path substitution, and backup manifests passed. All JSON templates and JSON Markdown blocks parsed; the appendix matched every configuration template. A basic known-token/private-key and source-home-path scan passed. The package installation helper was previewed, not executed against a second workstation; Ponytail installation and GSD/Bigpowers removal were performed on the source machine on 2026-10-04. After upgrading Pi to 1.0.2, Subagents 0.75.0 completed a fresh headless scout launch against a temporary marker file; Pi startup emitted none of the reported MCP/TypeBox warnings. A migration fixture confirmed the package and MCP filter changes. No credentials, memory files, session history or project data were copied. These checks establish configuration portability and the bounded child launch, not exhaustive authenticated behavior on a new account.
