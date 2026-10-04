@@ -1,0 +1,11 @@
+{
+  "settings": {
+    "approveTools": true,
+    "directTools": false,
+    "scriptMode": false,
+    "hostConfigDiscovery": "off",
+    "mcpFooterStatus": "compact",
+    "notifyOnStartupConnect": false
+  },
+  "mcpServers": {}
+}

@@ -1,0 +1,90 @@
+{
+  "theme": "light",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-6.1-sol",
+  "defaultThinkingLevel": "medium",
+  "compaction": {"enabled": true},
+  "tuiMode": "regular",
+  "enableSkillCommands": true,
+  "extensions": ["-builtin:mcp"],
+  "packages": [
+    "npm:pi-mcp-adapter@5.0.0",
+    "npm:pi-web-access@0.35.0",
+    "npm:pi-subagents@0.75.0",
+    "npm:@juicesharp/rpiv-todo@2.12.0",
+    "npm:billion-context-pi@0.1.83",
+    "npm:pi-goal-x@0.32.3",
+    "git:github.com/DietrichGebert/ponytail@v4.10.3"
+  ],
+  "subagents": {
+    "agentOverrides": {
+      "scout": {
+        "model": "openai-codex/gpt-6-luna",
+        "thinking": "low",
+        "inheritProjectContext": true,
+        "allowNestedSubagents": false,
+        "extensions": ["__PI_AGENT_DIR__/npm/node_modules/pi-mcp-adapter/index.ts", "__PI_AGENT_DIR__/npm/node_modules/billion-context-pi/dist/index.js"],
+        "tools": ["read", "grep", "find", "ls", "bash", "mcp", "compress", "decompress", "search_context", "acp_status"],
+        "completionGuard": false,
+        "output": false
+      },
+      "researcher": {
+        "model": "openai-codex/gpt-6-luna",
+        "thinking": "medium",
+        "inheritProjectContext": true,
+        "allowNestedSubagents": false,
+        "extensions": ["__PI_AGENT_DIR__/npm/node_modules/pi-web-access/index.ts", "__PI_AGENT_DIR__/npm/node_modules/billion-context-pi/dist/index.js"],
+        "tools": ["read", "write", "web_search", "fetch_content", "get_search_content", "source_check", "compress", "decompress", "search_context", "acp_status"]
+      },
+      "evidence-auditor": {
+        "model": "openai-codex/gpt-6.1-sol",
+        "thinking": "medium",
+        "inheritProjectContext": true,
+        "allowNestedSubagents": false,
+        "extensions": ["__PI_AGENT_DIR__/npm/node_modules/pi-web-access/index.ts", "__PI_AGENT_DIR__/npm/node_modules/billion-context-pi/dist/index.js"],
+        "tools": ["read", "write", "web_search", "fetch_content", "get_search_content", "source_check", "compress", "decompress", "search_context", "acp_status"]
+      },
+      "worker": {
+        "model": "openai-codex/gpt-6-luna",
+        "thinking": "high",
+        "inheritProjectContext": true,
+        "allowNestedSubagents": false,
+        "extensions": ["__PI_AGENT_DIR__/npm/node_modules/pi-mcp-adapter/index.ts", "__PI_AGENT_DIR__/npm/node_modules/billion-context-pi/dist/index.js"],
+        "tools": ["read", "grep", "find", "ls", "bash", "mcp", "write", "edit", "compress", "decompress", "search_context", "acp_status"],
+        "completionGuard": true,
+        "inheritSkills": true
+      },
+      "reviewer": {
+        "model": "openai-codex/gpt-6.1-sol",
+        "thinking": "high",
+        "inheritProjectContext": true,
+        "allowNestedSubagents": false,
+        "extensions": ["__PI_AGENT_DIR__/npm/node_modules/pi-mcp-adapter/index.ts", "__PI_AGENT_DIR__/npm/node_modules/billion-context-pi/dist/index.js"],
+        "tools": ["read", "grep", "find", "ls", "bash", "mcp", "compress", "decompress", "search_context", "acp_status"],
+        "completionGuard": false,
+        "output": false
+      },
+      "oracle": {
+        "model": "openai-codex/gpt-6.1-sol",
+        "thinking": "high",
+        "inheritProjectContext": true,
+        "allowNestedSubagents": false,
+        "extensions": ["__PI_AGENT_DIR__/npm/node_modules/pi-mcp-adapter/index.ts", "__PI_AGENT_DIR__/npm/node_modules/billion-context-pi/dist/index.js"],
+        "tools": ["read", "grep", "find", "ls", "bash", "mcp", "compress", "decompress", "search_context", "acp_status"],
+        "completionGuard": false,
+        "output": false
+      },
+      "delegate": {
+        "model": "openai-codex/gpt-6.1-sol",
+        "thinking": "medium",
+        "inheritProjectContext": true,
+        "allowNestedSubagents": false,
+        "extensions": ["__PI_AGENT_DIR__/npm/node_modules/pi-mcp-adapter/index.ts", "__PI_AGENT_DIR__/npm/node_modules/billion-context-pi/dist/index.js"],
+        "tools": ["read", "grep", "find", "ls", "bash", "mcp", "write", "edit", "compress", "decompress", "search_context", "acp_status"],
+        "completionGuard": true,
+        "inheritSkills": true
+      }
+    },
+    "defaultExtensions": []
+  }
+}

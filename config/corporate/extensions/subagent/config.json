@@ -1,0 +1,10 @@
+{
+  "forceTopLevelAsync": true,
+  "parallel": {
+    "maxTasks": 8,
+    "concurrency": 2
+  },
+  "timeoutMs": 1800000,
+  "globalConcurrencyLimit": 2,
+  "maxActiveAsyncRunsPerSession": 2
+}

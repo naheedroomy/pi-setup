@@ -33,12 +33,16 @@ def package_name(item):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--apply', action='store_true', help='Write files; default only previews destinations')
+    parser.add_argument('--profile', choices=('personal', 'corporate'), default='personal')
     parser.add_argument('--home', type=Path, default=Path.home(), help='Target home directory (also useful for isolated validation)')
     args = parser.parse_args()
     home = args.home.expanduser().resolve()
     agent = home / '.pi/agent'
-    mapping = [(p, agent / p.relative_to(ROOT / 'config/pi-agent')) for p in sorted((ROOT / 'config/pi-agent').rglob('*')) if p.is_file()]
-    mapping += [(ROOT / 'config/acp.json', home / '.pi/acp.json'), (ROOT / 'config/lens.json', home / '.pi-lens/config.json'), (ROOT / 'config/todo.json', home / '.config/rpiv-todo/config.json')]
+    profile_dir = ROOT / 'config' / ('pi-agent' if args.profile == 'personal' else 'corporate')
+    mapping = [(p, agent / p.relative_to(profile_dir)) for p in sorted(profile_dir.rglob('*')) if p.is_file()]
+    mapping += [(ROOT / 'config/acp.json', home / '.pi/acp.json'), (ROOT / 'config/todo.json', home / '.config/rpiv-todo/config.json')]
+    if args.profile == 'personal':
+        mapping.append((ROOT / 'config/lens.json', home / '.pi-lens/config.json'))
     plan = []
     for src, dest in mapping:
         # JSON escaping handles spaces, backslashes and quotes in a home directory.
@@ -49,9 +53,10 @@ def main():
         text = text.replace('__PI_AGENT_DIR__', json.dumps(str(agent))[1:-1] if src.suffix == '.json' else str(agent))
         if src.suffix == '.json':
             try:
-                new = json.loads(text)
+                template = json.loads(text)
             except json.JSONDecodeError as exc:
                 raise SystemExit(f'Invalid JSON template {src}: {exc}') from exc
+            new = template
             existing = dest
             if dest == agent / 'mcp-adapter.json' and not dest.exists():
                 legacy = agent / 'mcp.json'
@@ -65,10 +70,17 @@ def main():
                 if existing == dest or 'hostConfigDiscovery' in old.get('settings', {}):
                     new = merge(old, new)
                 if dest == agent / 'settings.json':
-                    managed = {package_name(p) for p in new['packages']}
-                    retired = {'bigpowers', '@narumitw/pi-goal'}
-                    new['packages'] += [p for p in old.get('packages', [])
-                                        if package_name(p) not in managed | retired]
+                    managed = {package_name(p) for p in template['packages']}
+                    extras = [p for p in old.get('packages', []) if package_name(p) not in managed]
+                    if args.profile == 'corporate':
+                        if extras:
+                            sources = [p if isinstance(p, str) else p['source'] for p in extras]
+                            raise SystemExit(f'Corporate profile has extra packages. Ask before removing them: {sources}')
+                        new['packages'] = template['packages']
+                        new['subagents']['agentOverrides'] = template['subagents']['agentOverrides']
+                    else:
+                        retired = {'bigpowers', '@narumitw/pi-goal'}
+                        new['packages'] += [p for p in extras if package_name(p) not in retired]
             text = json.dumps(new, indent=2) + '\n'
         if dest == agent / 'AGENTS.md':
             start, end = '<!-- pi-setup:start -->', '<!-- pi-setup:end -->'

@@ -1,6 +1,6 @@
 # Portable Pi setup guide
 
-This repository describes and reproduces the Pi setup updated on **2026-10-04**. It is a deployment specification for a human or a setup agent, with copyable configuration and optional helper scripts. It covers Pi, not the earlier OMP/OpenCode installations. The target is a personal Linux workstation using the default `~/.pi/agent` directory.
+This repository describes and reproduces the Pi setup updated on **2026-10-04**. It is a deployment specification for a human or a setup agent, with copyable configuration and optional helper scripts. It covers Pi, not the earlier OMP/OpenCode installations. The target is a personal Linux workstation using the default `~/.pi/agent` directory. For the separate, reduced-resource **corporate VDI** profile, see [CORPORATE.md](CORPORATE.md); the commands below default to the personal profile.
 
 For a plain-language explanation of the team, model choices and delegation workflow, read [How my Pi subagents work](SUBAGENTS.md).
 
