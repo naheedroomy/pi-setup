@@ -95,6 +95,6 @@ The desired behavior is persistent repair and verification within authorized sco
 
 I avoid assigning the most expensive model to every role, replacing the stock agent roster with a large custom framework, making every task pass through every agent, and having children recursively spawn more children.
 
-I also avoid competing delegation, task-list and continuation systems. Billion Context delegation is off; Pi Continue is inactive because it requires native compaction; Bigpowers contributes skills/prompts with its blocking extension hooks disabled. Ralph loops were considered but are not part of this setup.
+I also avoid competing delegation, task-list and continuation systems. Billion Context delegation is off; Pi Continue is inactive because it requires native compaction; GSD and Bigpowers are removed. Ponytail advises the parent to prefer the simplest correct solution without changing the subagent roster. Ralph loops were considered but are not part of this setup.
 
 The governing preference is simple: concise coordination, bounded assignments, appropriate model cost, independent checks where useful, and continued repair until the agreed work is verified or a real stopping condition is reached.

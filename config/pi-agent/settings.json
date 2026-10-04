@@ -14,10 +14,6 @@
     "npm:@juicesharp/rpiv-ask-user-question@2.10.1",
     "npm:@juicesharp/rpiv-todo@2.10.1",
     "npm:pi-lens@4.1.6",
-    {
-      "source": "npm:bigpowers@2.88.6",
-      "extensions": []
-    },
     "npm:billion-context-pi@0.1.71",
     "npm:pi-antigravity@0.7.3",
     "npm:pi-memory@0.4.2",
@@ -26,7 +22,8 @@
       "source": "npm:pi-continue@0.9.3",
       "extensions": []
     },
-    "npm:@narumitw/pi-goal@0.54.5"
+    "npm:@narumitw/pi-goal@0.54.5",
+    "git:github.com/DietrichGebert/ponytail@v4.10.3"
   ],
   "defaultThinkingLevel": "medium",
   "subagents": {

@@ -22,6 +22,8 @@ def merge(old, new):
 
 def package_name(item):
     source = item if isinstance(item, str) else item['source']
+    if source.startswith('git:'):
+        return source.rsplit('@', 1)[0]
     if not source.startswith('npm:'):
         return source
     name = source[4:]
@@ -48,7 +50,9 @@ def main():
                 new = merge(old, new)
                 if dest == agent / 'settings.json':
                     managed = {package_name(p) for p in new['packages']}
-                    new['packages'] += [p for p in old.get('packages', []) if package_name(p) not in managed]
+                    retired = {'bigpowers'}
+                    new['packages'] += [p for p in old.get('packages', [])
+                                        if package_name(p) not in managed | retired]
             text = json.dumps(new, indent=2) + '\n'
         if dest == agent / 'AGENTS.md':
             start, end = '<!-- pi-setup:start -->', '<!-- pi-setup:end -->'

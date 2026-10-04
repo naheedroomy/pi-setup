@@ -1,6 +1,6 @@
 # Portable Pi setup guide
 
-This repository describes and reproduces the Pi setup captured on **2026-09-19**. It is a deployment specification for a human or a setup agent, with copyable configuration and optional helper scripts. It covers Pi, not the earlier OMP/OpenCode installations. The target is a personal Linux workstation using the default `~/.pi/agent` directory.
+This repository describes and reproduces the Pi setup updated on **2026-10-04**. It is a deployment specification for a human or a setup agent, with copyable configuration and optional helper scripts. It covers Pi, not the earlier OMP/OpenCode installations. The target is a personal Linux workstation using the default `~/.pi/agent` directory.
 
 For a plain-language explanation of the team, model choices and delegation workflow, read [How my Pi subagents work](SUBAGENTS.md).
 
@@ -16,13 +16,13 @@ The package responsibilities are deliberately separate:
 - **Pi Goal** drives explicit session objectives and continuation. It does not enforce test success or independently audit every completion claim.
 - **MCP Adapter** supplies lazy CodeGraph/Playwright tools. Web Access supplies research tools.
 - **Lens** supplies diagnostics on demand; startup scans, autoformat, autofix, automatic tests and its guard are disabled.
-- **Bigpowers** supplies skills and prompts only. Its extension hooks are disabled.
+- **Ponytail** encourages minimal, correct changes. Its Pi extension injects the active mode into the parent prompt; use `/ponytail lite|full|ultra|off` to adjust it. It does not replace project requirements or verification.
 
 This configuration avoids routine tool-approval prompts. It does not bypass provider authentication, operating-system permissions, explicit user cancellation, or real product decisions. Pi itself does not require an OpenCode-style `--dangerously-skip-permissions` flag. The [official Pi overview](https://pi.dev/) describes its extension-based approach to permissions and capabilities.
 
 ## Runtime and reproducibility
 
-Captured runtime: Node.js **24.21.0**, Pi (`@earendil-works/pi-coding-agent`) **0.85.1**, CodeGraph (`@colbymchenry/codegraph`) **1.6.0**, Python 3 for the helper scripts. `git` is useful for project workflows; `gh` is needed only for GitHub work.
+Observed runtime: Node.js **24.21.0**, Pi (`@earendil-works/pi-coding-agent`) **0.87.1**, CodeGraph (`@colbymchenry/codegraph`) **1.6.0**, Python 3 for the helper scripts. `git` is useful for project workflows; `gh` is needed only for GitHub work.
 
 Use the versions below for the closest reproduction. This is a top-level package snapshot, **not a full dependency lock or a guarantee of future provider availability**. Transitive dependencies and Playwright's `@latest` MCP command can change. Record intentional upgrades and rerun validation.
 
@@ -38,7 +38,7 @@ Two source entries were floating (`pi-memory`, `@narumitw/pi-btw`); this guide p
 | `@juicesharp/rpiv-ask-user-question` | 2.10.1 | Active; structured questions for material decisions |
 | `@juicesharp/rpiv-todo` | 2.10.1 | Active; one substantive task list |
 | `pi-lens` | 4.1.6 | Active; diagnostics loaded on demand |
-| `bigpowers` | 2.88.6 | Skills/prompts only; `extensions: []` |
+| `ponytail` | git tag `v4.10.3` | Active; minimal implementation guidance and review commands |
 | `billion-context-pi` | 0.1.71 | Active; context compression and retrieval |
 | `pi-antigravity` | 0.7.3 | Active; Google Antigravity provider |
 | `pi-memory` | 0.4.2 | Active; durable memory and scratchpad |
@@ -46,7 +46,7 @@ Two source entries were floating (`pi-memory`, `@narumitw/pi-btw`); this guide p
 | `pi-continue` | 0.9.3 | Installed but inactive; `extensions: []` |
 | `@narumitw/pi-goal` | 0.54.5 | Active; explicit goal continuation |
 
-`pi-continue` requires native compaction and is excluded while ACP owns compression. Bigpowers' hooks were excluded because their blocking workflow conflicted with the desired approval-free routine. Do not replace either filtered entry with a plain package string after installing. Superpowers, Ralph loops, Pi Til Done and a standalone background-tasks package are **not installed** in this snapshot. Native Subagents completion notifications handle child waits.
+`pi-continue` requires native compaction and is excluded while ACP owns compression; keep its `extensions: []` filter. GSD and Bigpowers are not part of this setup. Superpowers, Ralph loops, Pi Til Done and a standalone background-tasks package are **not installed** in this snapshot. Native Subagents completion notifications handle child waits. Ponytail's git tag is pinned; update it intentionally rather than tracking the repository's moving default branch.
 
 ## Models and agents
 
@@ -107,7 +107,7 @@ Do not export auth stores, sessions, memory contents, MCP caches, trust decision
 With Node 24.21.0 selected using your normal Node installation/version manager:
 
 ```bash
-npm install -g --ignore-scripts @earendil-works/pi-coding-agent@0.85.1
+npm install -g --ignore-scripts @earendil-works/pi-coding-agent@0.87.1
 npm install -g @colbymchenry/codegraph@1.6.0
 pi --version
 codegraph --version
@@ -128,7 +128,7 @@ python3 scripts/configure.py --apply        # Apply paths, filters and role over
 
 Do not launch an interactive Pi task between installing packages and applying configuration: the package filters must be in place first. If installation fails partway, resolve that failure, rerun installation, then apply configuration. The installation script uses the official `pi install` command from your home directory and stops at the first failure. It does not upgrade the runtime, configure external CLI tools, authenticate, or run project tasks.
 
-The configuration script expands `__PI_AGENT_DIR__` into the target absolute path, merges JSON mappings, replaces managed arrays/settings, replaces managed package versions by package name, and retains unrelated packages. It backs up overwritten files with a manifest under `~/.pi/agent/backups/pi-setup-*`. Existing global AGENTS text is retained outside a managed section; existing custom Designer/Observer definitions are backed up and replaced. Inspect conflicting retained instructions, role overrides and unrelated extensions; preserving them does not establish compatibility. Existing extra keys inside managed role objects remain because JSON merging is recursive.
+The configuration script expands `__PI_AGENT_DIR__` into the target absolute path, merges JSON mappings, replaces managed arrays/settings, replaces managed package versions by package identity (including git tags), retires Bigpowers, and retains unrelated packages. It backs up overwritten files with a manifest under `~/.pi/agent/backups/pi-setup-*`. Existing global AGENTS text is retained outside a managed section; existing custom Designer/Observer definitions are backed up and replaced. Inspect conflicting retained instructions, role overrides and unrelated extensions; preserving them does not establish compatibility. Existing extra keys inside managed role objects remain because JSON merging is recursive.
 
 For a preview/fixture targeting another home directory, use `--home /path/to/home`. This only changes configuration destinations; the install script uses the actual user environment. The helper does not make a multi-file atomic transaction; its backups support recovery if a write fails.
 
@@ -152,7 +152,7 @@ Web Access exposes `web_search`, `fetch_content`, `get_search_content`, and `sou
 
 ### 6. Optional per-project and memory features
 
-Bigpowers skills/prompts are available without its hook extension. Apply relevant skills on demand instead of imposing its entire workflow on every task. Any project-specific Bigpowers initialization is a separate decision: regenerate its integration for the new project if needed, and never copy an absolute scripts symlink from another machine. Existing project skills, design guidance, AGENTS.md and specifications remain authoritative. This repo does not bundle the art marketplace's product documents or local Impeccable/Supabase skills.
+Ponytail defaults to `full`; `/ponytail lite` lets the agent suggest the simpler alternative without enforcing it, while `/ponytail off` disables its guidance for the session. Its extension adds `/ponytail-review`, `/ponytail-audit`, `/ponytail-debt`, `/ponytail-gain` and `/ponytail-help`. Parent extensions are not assumed to be inherited by subagents, so do not assume the Ponytail rules are injected into every child. Existing project skills, design guidance, AGENTS.md and specifications remain authoritative. This repo does not bundle the art marketplace's product documents or local Impeccable/Supabase skills.
 
 Pi Memory's normal file tools need no extra backend. Its search feature requires qmd; qmd was **not found on the source PATH** during this capture. Installing Memory does not prove semantic search works. If desired, follow [Pi Memory's qmd setup](https://github.com/jayzeng/pi-memory#optional-enable-search-with-qmd) and validate using `memory_status`. Do not migrate private memories by default.
 
@@ -190,10 +190,10 @@ Do not enable Pi Continue alongside ACP. Do not add another auto-continuation en
 
 Use a temporary fixture project for write/tool tests, not production data. Do not start the user's actual implementation objective as a setup test.
 
-- `pi --version` is 0.85.1, `pi list` contains the captured packages, and every managed JSON file parses.
+- `pi --version` is 0.87.1, `pi list` contains the captured packages, and every managed JSON file parses.
 - Restart Pi and confirm no extension-loading errors. A Python/configuration check alone is not runtime validation.
 - Inspect Subagents through its `subagent` tool (`action: "list", capabilities: true`); confirm all seven stock mappings plus Designer/Observer, thinking levels, tools and resolved extension paths. Use its doctor capability to diagnose launch issues when exposed by the installed version.
-- Parent can access Todo, structured questions, `mcp`, web tools, ACP, `subagent`, Memory and Goal. `acp_delegate` must not be active; Bigpowers' disabled hook must not load. `/btw` should register.
+- Parent can access Todo, structured questions, `mcp`, web tools, ACP, `subagent`, Memory, Goal and `/ponytail`. `acp_delegate` must not be active; GSD and Bigpowers must not load. `/btw` should register.
 - Discover MCP tools; CodeGraph responds for an intentionally indexed fixture, and Playwright opens/closes `about:blank`.
 - Fetch a public documentation page and run one small search. Report authentication/backend failures separately.
 - Create, update and complete a disposable Todo in a throwaway session.
@@ -202,7 +202,7 @@ Use a temporary fixture project for write/tool tests, not production data. Do no
 - For Goal, use a disposable test fixture: a check initially fails, the agent repairs it, reruns it, updates the todo and records completion. Exercise pause/resume and a bounded external wait. Record whether this is a simulated or live-provider test. Do not claim long-running compatibility based only on tool registration.
 - Report changed files, installed/observed versions, exact checks performed, failures, and any account-dependent work still required.
 
-Historical validation on the source workstation: zero extension-loader errors; native async scout runs returned the expected marker; MCP/browser/web/Todo and synthetic ACP checks passed. Upstream Goal runtime smoke tests passed against installed Pi for continuation, queued input, pause, limits, retries and native compaction. Later session evidence showed Goal automatically continued and woke around async child work. This is not exhaustive live validation of ACP + Goal + all providers, or proof that every long task completes. The 0.1.71 ACP drift was observed during this documentation pass, not separately retested end-to-end.
+Historical validation on the source workstation (before the 2026-10-04 Ponytail swap): zero extension-loader errors; native async scout runs returned the expected marker; MCP/browser/web/Todo and synthetic ACP checks passed. Upstream Goal runtime smoke tests passed against installed Pi for continuation, queued input, pause, limits, retries and native compaction. Later session evidence showed Goal automatically continued and woke around async child work. This is not exhaustive live validation of ACP + Goal + all providers, or proof that every long task completes. The 0.1.71 ACP drift was observed during this documentation pass, not separately retested end-to-end.
 
 ## Troubleshooting
 
@@ -250,7 +250,7 @@ MCP servers are lazily available through mcp: CodeGraph for indexed repositories
 
 # Additional packages
 
-Bigpowers skills and prompt templates are available on demand. Apply relevant skills to the actual task and preserve the repository's foundation decisions and Impeccable design workflow. Existing user authorization takes precedence over generic skill approval stages. Do not impose the whole Bigpowers lifecycle on every question.
+Ponytail encourages the smallest correct implementation: reuse existing code and native facilities before introducing new abstractions. Preserve requested scope, security, accessibility and project-required verification; `/ponytail lite|full|ultra|off` controls its intensity.
 
 Billion Context Pi owns context compression; use compress/decompress/search_context/acp_status for long sessions. Its delegation feature is disabled: use pi-subagents for delegation. Preserve task status, decisions and verification evidence when compressing.
 
@@ -379,10 +379,6 @@ Inspect the supplied images and report concrete visual findings relevant to the 
     "npm:@juicesharp/rpiv-ask-user-question@2.10.1",
     "npm:@juicesharp/rpiv-todo@2.10.1",
     "npm:pi-lens@4.1.6",
-    {
-      "source": "npm:bigpowers@2.88.6",
-      "extensions": []
-    },
     "npm:billion-context-pi@0.1.71",
     "npm:pi-antigravity@0.7.3",
     "npm:pi-memory@0.4.2",
@@ -391,7 +387,8 @@ Inspect the supplied images and report concrete visual findings relevant to the 
       "source": "npm:pi-continue@0.9.3",
       "extensions": []
     },
-    "npm:@narumitw/pi-goal@0.54.5"
+    "npm:@narumitw/pi-goal@0.54.5",
+    "git:github.com/DietrichGebert/ponytail@v4.10.3"
   ],
   "defaultThinkingLevel": "medium",
   "subagents": {
@@ -631,7 +628,7 @@ These links document the package behavior; the local snapshot and pinned templat
 - [Subagents](https://github.com/nicobailon/pi-subagents)
 - [RPIV Todo / Ask User Question](https://github.com/juicesharp/rpiv-mono)
 - [Lens](https://github.com/apmantza/pi-lens)
-- [Bigpowers](https://github.com/danielvm-git/bigpowers)
+- [Ponytail](https://github.com/DietrichGebert/ponytail)
 - [Billion Context Pi](https://github.com/ranxianglei/billion-context-pi)
 - [Antigravity](https://github.com/Rahularya01/pi-antigravity)
 - [Memory](https://github.com/jayzeng/pi-memory)
@@ -642,4 +639,4 @@ These links document the package behavior; the local snapshot and pinned templat
 
 ## Repository validation record
 
-On 2026-09-19, the configuration helper was exercised against a temporary home directory, including a path containing spaces. Fresh application, repeated application, preservation of unrelated settings/packages and global guidance, replacement of managed package versions, activation filters, absolute-path substitution, and backup manifests passed. All JSON templates and JSON Markdown blocks parsed; the appendix matched every configuration template. A basic known-token/private-key and source-home-path scan passed. The package installation helper was previewed, not executed against a second workstation. No credentials, memory files, session history or project data were copied. These checks establish configuration portability, not authenticated end-to-end behavior on a new account.
+On 2026-09-19, the configuration helper was exercised against a temporary home directory, including a path containing spaces. Fresh application, repeated application, preservation of unrelated settings/packages and global guidance, replacement of managed package versions, activation filters, absolute-path substitution, and backup manifests passed. All JSON templates and JSON Markdown blocks parsed; the appendix matched every configuration template. A basic known-token/private-key and source-home-path scan passed. The package installation helper was previewed, not executed against a second workstation; Ponytail installation and GSD/Bigpowers removal were performed on the source machine on 2026-10-04. No credentials, memory files, session history or project data were copied. These checks establish configuration portability, not authenticated end-to-end behavior on a new account.

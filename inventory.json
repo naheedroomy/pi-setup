@@ -1,6 +1,6 @@
 {
-  "captured": "2026-09-19",
-  "pi": "0.85.1",
+  "captured": "2026-10-04",
+  "pi": "0.87.1",
   "node": "24.21.0",
   "codegraph": "1.6.0",
   "packages": [
@@ -47,13 +47,6 @@
       "extensionsEnabled": true
     },
     {
-      "name": "bigpowers",
-      "configuredSource": "npm:bigpowers@2.88.6",
-      "installedVersion": "2.88.6",
-      "portableSource": "npm:bigpowers@2.88.6",
-      "extensionsEnabled": false
-    },
-    {
       "name": "billion-context-pi",
       "configuredSource": "npm:billion-context-pi@0.1.70",
       "installedVersion": "0.1.71",
@@ -93,6 +86,13 @@
       "configuredSource": "npm:@narumitw/pi-goal@0.54.5",
       "installedVersion": "0.54.5",
       "portableSource": "npm:@narumitw/pi-goal@0.54.5",
+      "extensionsEnabled": true
+    },
+    {
+      "name": "ponytail",
+      "configuredSource": "git:github.com/DietrichGebert/ponytail@v4.10.3",
+      "installedVersion": "4.10.3",
+      "portableSource": "git:github.com/DietrichGebert/ponytail@v4.10.3",
       "extensionsEnabled": true
     }
   ]

@@ -12,7 +12,7 @@ MCP servers are lazily available through mcp: CodeGraph for indexed repositories
 
 # Additional packages
 
-Bigpowers skills and prompt templates are available on demand. Apply relevant skills to the actual task and preserve the repository's foundation decisions and Impeccable design workflow. Existing user authorization takes precedence over generic skill approval stages. Do not impose the whole Bigpowers lifecycle on every question.
+Ponytail encourages the smallest correct implementation: reuse existing code and native facilities before introducing new abstractions. Preserve requested scope, security, accessibility and project-required verification; `/ponytail lite|full|ultra|off` controls its intensity.
 
 Billion Context Pi owns context compression; use compress/decompress/search_context/acp_status for long sessions. Its delegation feature is disabled: use pi-subagents for delegation. Preserve task status, decisions and verification evidence when compressing.
 
