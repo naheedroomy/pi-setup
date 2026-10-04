@@ -26,23 +26,23 @@ Observed runtime: Node.js **24.21.0**, Pi (`@earendil-works/pi-coding-agent`) **
 
 Use the versions below for the closest reproduction. This is a top-level package snapshot, **not a full dependency lock or a guarantee of future provider availability**. Transitive dependencies and Playwright's `@latest` MCP command can change. Record intentional upgrades and rerun validation.
 
-Two source entries were floating (`pi-memory`, `@narumitw/pi-btw`); this guide pins their installed versions. ACP was declared as 0.1.70 in settings but the installed package reported **0.1.71**. The reproduction pins 0.1.71 to match the installed files; the cause of that drift was not established. `inventory.json` preserves configured versus observed versions. The original workstation settings were not changed during documentation.
+All package sources are pinned. Five packages were upgraded on the source workstation on 2026-10-04; `inventory.json` now records the installed versions. An earlier snapshot recorded ACP 0.1.70 configured versus 0.1.71 installed; that historical drift is not part of the current setup.
 
 ## Packages
 
 | Package | Version | Activation and purpose |
 | --- | --- | --- |
-| `pi-mcp-adapter` | 2.33.0 | Active; lazy MCP discovery and calls |
+| `pi-mcp-adapter` | 5.0.0 | Active; lazy MCP discovery and calls (replaces built-in MCP) |
 | `pi-web-access` | 0.35.0 | Active; search, fetch and source checks |
 | `pi-subagents` | 0.75.0 | Active; stock role prompts, async children and supervision |
 | `@juicesharp/rpiv-ask-user-question` | 2.12.0 | Active; structured questions for material decisions |
 | `@juicesharp/rpiv-todo` | 2.12.0 | Active; one substantive task list |
-| `pi-lens` | 4.1.6 | Active; diagnostics loaded on demand |
+| `pi-lens` | 4.3.0 | Active; diagnostics loaded on demand |
 | `ponytail` | git tag `v4.10.3` | Active; minimal implementation guidance and review commands |
-| `billion-context-pi` | 0.1.71 | Active; context compression and retrieval |
-| `pi-antigravity` | 0.7.3 | Active; Google Antigravity provider |
+| `billion-context-pi` | 0.1.83 | Active; context compression and retrieval |
+| `pi-antigravity` | 0.9.0 | Active; Google Antigravity provider |
 | `pi-memory` | 0.4.2 | Active; durable memory and scratchpad |
-| `@narumitw/pi-btw` | 0.58.1 | Active; temporary side conversations |
+| `@narumitw/pi-btw` | 0.61.1 | Active; temporary side conversations |
 | `pi-continue` | 0.9.3 | Installed but inactive; `extensions: []` |
 | `pi-goal-x` | 0.32.3 | Active; explicit goal planning, continuation and optional auditing |
 
@@ -86,7 +86,7 @@ from datetime import datetime
 import shutil
 home = Path.home()
 backup = home / '.pi' / ('before-pi-setup-' + datetime.now().strftime('%Y%m%d-%H%M%S'))
-for relative in ['.pi/agent/settings.json', '.pi/agent/AGENTS.md', '.pi/agent/agents', '.pi/agent/extensions/subagent/config.json', '.pi/agent/mcp.json', '.pi/agent/pi-goal-x-settings.json', '.pi/acp.json', '.pi-lens/config.json', '.config/rpiv-todo/config.json']:
+for relative in ['.pi/agent/settings.json', '.pi/agent/AGENTS.md', '.pi/agent/agents', '.pi/agent/extensions/subagent/config.json', '.pi/agent/mcp.json', '.pi/agent/mcp-adapter.json', '.pi/agent/pi-goal-x-settings.json', '.pi/acp.json', '.pi-lens/config.json', '.config/rpiv-todo/config.json']:
     source = home / relative
     if not source.exists():
         continue
@@ -128,7 +128,7 @@ python3 scripts/configure.py --apply        # Apply paths, filters and role over
 
 Do not launch an interactive Pi task between installing packages and applying configuration: the package filters must be in place first. If installation fails partway, resolve that failure, rerun installation, then apply configuration. The installation script uses the official `pi install` command from your home directory and stops at the first failure. It does not upgrade the runtime, configure external CLI tools, authenticate, or run project tasks.
 
-The configuration script expands `__PI_AGENT_DIR__` into the target absolute path, merges JSON mappings, replaces managed arrays/settings, replaces managed package versions by package identity (including git tags), retires Bigpowers and the previous `@narumitw/pi-goal` package, and retains unrelated packages. The former `pi-goal.json` is not used by Goal X; the helper does not delete it or migrate old goal state. Back up or archive old goals separately before uninstalling if you need them. It backs up overwritten files with a manifest under `~/.pi/agent/backups/pi-setup-*`. Existing global AGENTS text is retained outside a managed section; existing custom Designer/Observer definitions are backed up and replaced. Inspect conflicting retained instructions, role overrides and unrelated extensions; preserving them does not establish compatibility. Existing extra keys inside managed role objects remain because JSON merging is recursive.
+The configuration script expands `__PI_AGENT_DIR__` into the target absolute path, merges JSON mappings, replaces managed arrays/settings, replaces managed package versions by package identity (including git tags), retires Bigpowers and the previous `@narumitw/pi-goal` package, and retains unrelated packages. Adapter 5 uses `~/.pi/agent/mcp-adapter.json`, not the old adapter's `mcp.json`; the helper merges legacy adapter settings and servers into the new file when it does not exist. It does not delete the legacy file: archive a legacy adapter-only `mcp.json` after backing it up. Leave a genuine Pi built-in MCP file in place if you use `pi mcp` commands; the adapter can import its server definitions. The former `pi-goal.json` is not used by Goal X; the helper does not delete it or migrate old goal state. Back up or archive old goals separately before uninstalling if you need them. It backs up overwritten files with a manifest under `~/.pi/agent/backups/pi-setup-*`. Existing global AGENTS text is retained outside a managed section; existing custom Designer/Observer definitions are backed up and replaced. Inspect conflicting retained instructions, role overrides and unrelated extensions; preserving them does not establish compatibility. Existing extra keys inside managed role objects remain because JSON merging is recursive.
 
 For a preview/fixture targeting another home directory, use `--home /path/to/home`. This only changes configuration destinations; the install script uses the actual user environment. The helper does not make a multi-file atomic transaction; its backups support recovery if a write fails.
 
@@ -313,13 +313,14 @@ Inspect the supplied images and report concrete visual findings relevant to the 
 }
 ```
 
-### `~/.pi/agent/mcp.json`
+### `~/.pi/agent/mcp-adapter.json`
 
 ```json
 {
   "settings": {
     "approveTools": false,
     "directTools": false,
+    "scriptMode": true,
     "hostConfigDiscovery": "off",
     "mcpFooterStatus": "compact",
     "notifyOnStartupConnect": false
@@ -367,16 +368,16 @@ Inspect the supplied images and report concrete visual findings relevant to the 
   "enableSkillCommands": true,
   "extensions": ["-builtin:mcp"],
   "packages": [
-    "npm:pi-mcp-adapter@2.33.0",
+    "npm:pi-mcp-adapter@5.0.0",
     "npm:pi-web-access@0.35.0",
     "npm:pi-subagents@0.75.0",
     "npm:@juicesharp/rpiv-ask-user-question@2.12.0",
     "npm:@juicesharp/rpiv-todo@2.12.0",
-    "npm:pi-lens@4.1.6",
-    "npm:billion-context-pi@0.1.71",
-    "npm:pi-antigravity@0.7.3",
+    "npm:pi-lens@4.3.0",
+    "npm:billion-context-pi@0.1.83",
+    "npm:pi-antigravity@0.9.0",
     "npm:pi-memory@0.4.2",
-    "npm:@narumitw/pi-btw@0.58.1",
+    "npm:@narumitw/pi-btw@0.61.1",
     {
       "source": "npm:pi-continue@0.9.3",
       "extensions": []
@@ -633,4 +634,4 @@ These links document the package behavior; the local snapshot and pinned templat
 
 ## Repository validation record
 
-On 2026-09-19, the configuration helper was exercised against a temporary home directory, including a path containing spaces. Fresh application, repeated application, preservation of unrelated settings/packages and global guidance, replacement of managed package versions, activation filters, absolute-path substitution, and backup manifests passed. All JSON templates and JSON Markdown blocks parsed; the appendix matched every configuration template. A basic known-token/private-key and source-home-path scan passed. The package installation helper was previewed, not executed against a second workstation; Ponytail installation and GSD/Bigpowers removal were performed on the source machine on 2026-10-04. After upgrading Pi to 1.0.2, Subagents 0.75.0 completed a fresh headless scout launch against a temporary marker file; Pi startup emitted none of the reported MCP/TypeBox warnings. A migration fixture confirmed the package and MCP filter changes. No credentials, memory files, session history or project data were copied. These checks establish configuration portability and the bounded child launch, not exhaustive authenticated behavior on a new account.
+On 2026-09-19, the configuration helper was exercised against a temporary home directory, including a path containing spaces. Fresh application, repeated application, preservation of unrelated settings/packages and global guidance, replacement of managed package versions, activation filters, absolute-path substitution, and backup manifests passed. All JSON templates and JSON Markdown blocks parsed; the appendix matched every configuration template. A basic known-token/private-key and source-home-path scan passed. The package installation helper was previewed, not executed against a second workstation; Ponytail installation and GSD/Bigpowers removal were performed on the source machine on 2026-10-04. After upgrading Pi to 1.0.2, Subagents 0.75.0 completed a fresh headless scout launch against a temporary marker file; Pi startup emitted none of the reported MCP/TypeBox warnings. On 2026-10-04, five package upgrades and MCP adapter config migration were applied; a fresh headless Pi RPC session loaded extensions without startup errors, and adapter 5's doctor found CodeGraph and Playwright healthy. No credentials, memory files, session history or project data were copied. These checks establish configuration portability and bounded startup/MCP behavior, not exhaustive authenticated behavior on a new account.

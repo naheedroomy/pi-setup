@@ -42,12 +42,28 @@ def main():
     plan = []
     for src, dest in mapping:
         # JSON escaping handles spaces, backslashes and quotes in a home directory.
-        text = src.read_text().replace('__PI_AGENT_DIR__', json.dumps(str(agent))[1:-1] if src.suffix == '.json' else str(agent))
+        try:
+            text = src.read_text()
+        except OSError as exc:
+            raise SystemExit(f'Cannot read {src}: {exc}') from exc
+        text = text.replace('__PI_AGENT_DIR__', json.dumps(str(agent))[1:-1] if src.suffix == '.json' else str(agent))
         if src.suffix == '.json':
-            new = json.loads(text)
-            if dest.exists():
-                old = json.loads(dest.read_text())
-                new = merge(old, new)
+            try:
+                new = json.loads(text)
+            except json.JSONDecodeError as exc:
+                raise SystemExit(f'Invalid JSON template {src}: {exc}') from exc
+            existing = dest
+            if dest == agent / 'mcp-adapter.json' and not dest.exists():
+                legacy = agent / 'mcp.json'
+                if legacy.exists():
+                    existing = legacy
+            if existing.exists():
+                try:
+                    old = json.loads(existing.read_text())
+                except (OSError, json.JSONDecodeError) as exc:
+                    raise SystemExit(f'Cannot read {existing}: {exc}') from exc
+                if existing == dest or 'hostConfigDiscovery' in old.get('settings', {}):
+                    new = merge(old, new)
                 if dest == agent / 'settings.json':
                     managed = {package_name(p) for p in new['packages']}
                     retired = {'bigpowers', '@narumitw/pi-goal'}

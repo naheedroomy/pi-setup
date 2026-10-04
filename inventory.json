@@ -6,9 +6,9 @@
   "packages": [
     {
       "name": "pi-mcp-adapter",
-      "configuredSource": "npm:pi-mcp-adapter@2.33.0",
-      "installedVersion": "2.33.0",
-      "portableSource": "npm:pi-mcp-adapter@2.33.0",
+      "configuredSource": "npm:pi-mcp-adapter@5.0.0",
+      "installedVersion": "5.0.0",
+      "portableSource": "npm:pi-mcp-adapter@5.0.0",
       "extensionsEnabled": true
     },
     {
@@ -41,23 +41,23 @@
     },
     {
       "name": "pi-lens",
-      "configuredSource": "npm:pi-lens@4.1.6",
-      "installedVersion": "4.1.6",
-      "portableSource": "npm:pi-lens@4.1.6",
+      "configuredSource": "npm:pi-lens@4.3.0",
+      "installedVersion": "4.3.0",
+      "portableSource": "npm:pi-lens@4.3.0",
       "extensionsEnabled": true
     },
     {
       "name": "billion-context-pi",
-      "configuredSource": "npm:billion-context-pi@0.1.70",
-      "installedVersion": "0.1.71",
-      "portableSource": "npm:billion-context-pi@0.1.71",
+      "configuredSource": "npm:billion-context-pi@0.1.83",
+      "installedVersion": "0.1.83",
+      "portableSource": "npm:billion-context-pi@0.1.83",
       "extensionsEnabled": true
     },
     {
       "name": "pi-antigravity",
-      "configuredSource": "npm:pi-antigravity@0.7.3",
-      "installedVersion": "0.7.3",
-      "portableSource": "npm:pi-antigravity@0.7.3",
+      "configuredSource": "npm:pi-antigravity@0.9.0",
+      "installedVersion": "0.9.0",
+      "portableSource": "npm:pi-antigravity@0.9.0",
       "extensionsEnabled": true
     },
     {
@@ -69,9 +69,9 @@
     },
     {
       "name": "@narumitw/pi-btw",
-      "configuredSource": "npm:@narumitw/pi-btw",
-      "installedVersion": "0.58.1",
-      "portableSource": "npm:@narumitw/pi-btw@0.58.1",
+      "configuredSource": "npm:@narumitw/pi-btw@0.61.1",
+      "installedVersion": "0.61.1",
+      "portableSource": "npm:@narumitw/pi-btw@0.61.1",
       "extensionsEnabled": true
     },
     {

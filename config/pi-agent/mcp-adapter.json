@@ -2,6 +2,7 @@
   "settings": {
     "approveTools": false,
     "directTools": false,
+    "scriptMode": true,
     "hostConfigDiscovery": "off",
     "mcpFooterStatus": "compact",
     "notifyOnStartupConnect": false
