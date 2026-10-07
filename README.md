@@ -1,6 +1,6 @@
 # Portable Pi setup guide
 
-This repository describes and reproduces the Pi setup updated on **2026-10-04**. It is a deployment specification for a human or a setup agent, with copyable configuration and optional helper scripts. It covers Pi, not the earlier OMP/OpenCode installations. The target is a personal Linux workstation using the default `~/.pi/agent` directory. For the separate, reduced-resource **corporate VDI** profile, see [CORPORATE.md](CORPORATE.md); the commands below default to the personal profile.
+This repository describes and reproduces the Pi personal setup updated on **2026-10-07**. It is a deployment specification for a human or a setup agent, with copyable configuration and optional helper scripts. It covers Pi, not the earlier OMP/OpenCode installations. The target is a personal Linux workstation using the default `~/.pi/agent` directory. For the separate, reduced-resource **corporate VDI** profile, see [CORPORATE.md](CORPORATE.md); the commands below default to the personal profile.
 
 For a plain-language explanation of the team, model choices and delegation workflow, read [How my Pi subagents work](SUBAGENTS.md).
 
@@ -15,6 +15,7 @@ The package responsibilities are deliberately separate:
 - **Billion Context Pi (ACP)** owns context compression. Native compaction remains enabled as a fallback if ACP is removed.
 - **Pi Goal X** drives explicit goals, persistent tasks, continuation, and optional independent completion auditing. Tests and acceptance criteria still need real evidence.
 - **MCP Adapter** supplies lazy CodeGraph/Playwright tools. Web Access supplies research tools.
+- **OpenWiki** supplies host-native repository-wiki tools. Its global CLI handles standalone wiki and integration commands; it is not another continuation engine.
 - **Lens** supplies diagnostics on demand; startup scans, autoformat, autofix, automatic tests and its guard are disabled.
 - **Ponytail** encourages minimal, correct changes. Its Pi extension injects the active mode into the parent prompt; use `/ponytail lite|full|ultra|off` to adjust it. It does not replace project requirements or verification.
 
@@ -22,29 +23,34 @@ This configuration avoids routine tool-approval prompts. It does not bypass prov
 
 ## Runtime and reproducibility
 
-Observed runtime: Node.js **24.21.0**, Pi (`@earendil-works/pi-coding-agent`) **1.0.2**, CodeGraph (`@colbymchenry/codegraph`) **1.6.0**, Python 3 for the helper scripts. `git` is useful for project workflows; `gh` is needed only for GitHub work.
+Observed runtime: Node.js **24.21.0**, npm **11.19.0**, Pi (`@earendil-works/pi-coding-agent`) **1.0.4**, CodeGraph (`@colbymchenry/codegraph`) **1.6.2**, qmd (`@tobilu/qmd`) **2.8.3**, OpenWiki CLI **0.7.1**, Python 3 for the helper scripts. `git` is useful for project workflows; `gh` is needed only for GitHub work.
 
 Use the versions below for the closest reproduction. This is a top-level package snapshot, **not a full dependency lock or a guarantee of future provider availability**. Transitive dependencies and Playwright's `@latest` MCP command can change. Record intentional upgrades and rerun validation.
 
-All package sources are pinned. Five packages were upgraded on the source workstation on 2026-10-04; `inventory.json` now records the installed versions. An earlier snapshot recorded ACP 0.1.70 configured versus 0.1.71 installed; that historical drift is not part of the current setup.
+All package sources are pinned to the latest stable releases checked on 2026-10-07; `inventory.json` records the installed versions. Ponytail uses the latest GitHub release tag. Packages already at the latest version remain unchanged. This update applies to the personal profile; the corporate profile remains a separate snapshot.
+
+The latest MCP Adapter and Web Access releases pin older MCP libraries with the OAuth advisory [GHSA-6qxp-vccf-f47h](https://github.com/advisories/GHSA-6qxp-vccf-f47h). `config/npm-overrides.json` pins the patched client/core **2.3.1** and SDK **1.32.1**. The personal installation helper applies these npm overrides and backs up the npm manifest/lockfile. This is a standard dependency override, not an edit to installed package source. Rerun MCP tests and `npm audit` after changes; do not use `npm audit fix --force` to downgrade the top-level extensions.
+
+OpenWiki 0.7.1 introduces one unresolved advisory in `braces <=3.0.3` through `deepagents` → `fast-glob` → `micromatch`. npm reports **five high-severity affected packages**, all from that advisory; no fixed release was available on 2026-10-07. Do not feed untrusted, deeply nested glob patterns to these dependencies. The latest OpenWiki was installed at the user's request; this is a recorded upstream risk, not a clean audit.
 
 ## Packages
 
 | Package | Version | Activation and purpose |
 | --- | --- | --- |
-| `pi-mcp-adapter` | 5.0.0 | Active; lazy MCP discovery and calls (replaces built-in MCP) |
-| `pi-web-access` | 0.35.0 | Active; search, fetch and source checks |
-| `pi-subagents` | 0.75.0 | Active; stock role prompts, async children and supervision |
+| `pi-mcp-adapter` | 5.1.0 | Active; lazy MCP discovery and calls (replaces built-in MCP) |
+| `pi-web-access` | 0.37.0 | Active; search, fetch and source checks |
+| `pi-subagents` | 0.76.1 | Active; stock role prompts, async children and supervision |
 | `@juicesharp/rpiv-ask-user-question` | 2.12.0 | Active; structured questions for material decisions |
 | `@juicesharp/rpiv-todo` | 2.12.0 | Active; one substantive task list |
 | `pi-lens` | 4.3.0 | Active; diagnostics loaded on demand |
-| `ponytail` | git tag `v4.10.3` | Active; minimal implementation guidance and review commands |
+| `ponytail` | git tag `v4.13.0` | Active; minimal implementation guidance and review commands |
 | `billion-context-pi` | 0.1.83 | Active; context compression and retrieval |
 | `pi-antigravity` | 0.9.0 | Active; Google Antigravity provider |
 | `pi-memory` | 0.4.2 | Active; durable memory and scratchpad |
 | `@narumitw/pi-btw` | 0.61.1 | Active; temporary side conversations |
 | `pi-continue` | 0.9.3 | Installed but inactive; `extensions: []` |
 | `pi-goal-x` | 0.32.3 | Active; explicit goal planning, continuation and optional auditing |
+| `openwiki` | 0.7.1 | Active; six native Pi tools for repository wikis; also installed as a global CLI |
 
 `pi-continue` requires native compaction and is excluded while ACP owns compression; keep its `extensions: []` filter. GSD and Bigpowers are not part of this setup. Superpowers, Ralph loops, Pi Til Done and a standalone background-tasks package are **not installed** in this snapshot. Native Subagents completion notifications handle child waits. Ponytail's git tag is pinned; update it intentionally rather than tracking the repository's moving default branch. Pi 1.0 removed `@earendil-works/pi-agent-core/node`; Subagents 0.75.0 makes that child-runner alias optional. Older Subagents (including 0.67.0) fails before launching background reviews on Pi 1.0. The three updated Web Access/RPIV packages and Subagents declare the host's `typebox` as a peer dependency.
 
@@ -68,6 +74,8 @@ GPT-6 Astra is intentionally excluded from the standing roster because it is res
 Keep the seven stock role definitions from the package and override their settings. Only Designer and Observer are custom Markdown agents. Stock provider/CLI-specific auxiliary agents may also be listed; they are not replacements for this roster and may require separately installed/authenticated CLIs.
 
 Explicit child extension allowlists are important: parent extensions are not assumed to be inherited. Code roles get MCP + ACP, research roles Web Access + ACP, and the custom Gemini roles explicitly load the Antigravity provider. Goal is a parent capability and is not added to children. `defaultExtensions: []` avoids incidental extension inheritance. Stock roles disable nested delegation; custom prompts also forbid it.
+
+Subagents 0.76.1's stock Reviewer requires `watchdog_diff`. Its explicit tool allowlist includes that native bounded diff tool; omitting it prevents a real review. SDK wrapper hosts outside Pi's npm package may need the supported `PI_SUBAGENTS_PI_CODING_AGENT_PACKAGE_ROOT` environment override pointing to the actual Pi package root. Normal `pi` launches discover their host automatically.
 
 Scout/reviewer/oracle have `output: false` to avoid requesting output-file writes without a write tool, and `completionGuard: false`. Worker/delegate keep completion guards and inherit skills. These are workflow restrictions, not an OS sandbox: roles with `bash` can still execute write-capable commands.
 
@@ -107,8 +115,9 @@ Do not export auth stores, sessions, memory contents, MCP caches, trust decision
 With Node 24.21.0 selected using your normal Node installation/version manager:
 
 ```bash
-npm install -g --ignore-scripts @earendil-works/pi-coding-agent@1.0.2
-npm install -g @colbymchenry/codegraph@1.6.0
+npm install -g --ignore-scripts @earendil-works/pi-coding-agent@1.0.4
+npm install -g @colbymchenry/codegraph@1.6.2
+npm install -g openwiki@0.7.1
 pi --version
 codegraph --version
 ```
@@ -126,9 +135,9 @@ python3 scripts/configure.py                # Preview config destinations
 python3 scripts/configure.py --apply        # Apply paths, filters and role overrides
 ```
 
-Do not launch an interactive Pi task between installing packages and applying configuration: the package filters must be in place first. If installation fails partway, resolve that failure, rerun installation, then apply configuration. The installation script uses the official `pi install` command from your home directory and stops at the first failure. It does not upgrade the runtime, configure external CLI tools, authenticate, or run project tasks.
+Do not launch an interactive Pi task between installing packages and applying configuration: the package filters must be in place first. If installation fails partway, resolve that failure, rerun installation, then apply configuration. The installation script uses the official `pi install` command from your home directory and stops at the first failure. For the personal profile, it then applies the MCP dependency overrides and runs `npm install --ignore-scripts` in `~/.pi/agent/npm`. It backs up `package.json` and `package-lock.json` under `~/.pi/agent/backups/pi-setup-npm-*`. It does not upgrade the runtime, configure external CLI tools, authenticate, or run project tasks.
 
-The configuration script expands `__PI_AGENT_DIR__` into the target absolute path, merges JSON mappings, replaces managed arrays/settings, replaces managed package versions by package identity (including git tags), retires Bigpowers and the previous `@narumitw/pi-goal` package, and retains unrelated packages. Adapter 5 uses `~/.pi/agent/mcp-adapter.json`, not the old adapter's `mcp.json`; the helper merges legacy adapter settings and servers into the new file when it does not exist. It does not delete the legacy file: archive a legacy adapter-only `mcp.json` after backing it up. Leave a genuine Pi built-in MCP file in place if you use `pi mcp` commands; the adapter can import its server definitions. The former `pi-goal.json` is not used by Goal X; the helper does not delete it or migrate old goal state. Back up or archive old goals separately before uninstalling if you need them. It backs up overwritten files with a manifest under `~/.pi/agent/backups/pi-setup-*`. Existing global AGENTS text is retained outside a managed section; existing custom Designer/Observer definitions are backed up and replaced. Inspect conflicting retained instructions, role overrides and unrelated extensions; preserving them does not establish compatibility. Existing extra keys inside managed role objects remain because JSON merging is recursive.
+The configuration script expands `__PI_AGENT_DIR__` into the target absolute path, merges JSON mappings, replaces managed arrays/settings, replaces managed package versions by package identity (including git tags), retires Bigpowers and the previous `@narumitw/pi-goal` package, and retains unrelated packages. Adapter 5 uses `~/.pi/agent/mcp-adapter.json`, not the old adapter's `mcp.json`; the helper merges legacy adapter settings and servers into the new file when it does not exist. It does not delete the legacy file: archive a legacy adapter-only `mcp.json` after backing it up. Leave a genuine Pi built-in MCP file in place if you use `pi mcp` commands; the adapter can import its server definitions. The former `pi-goal.json` is not used by Goal X; the helper does not delete it or migrate old goal state. Back up or archive old goals separately before uninstalling if you need them. It backs up overwritten files with a manifest under `~/.pi/agent/backups/pi-setup-*`. Existing global AGENTS text is retained outside a managed section; existing custom Designer/Observer definitions are backed up and replaced. Inspect conflicting retained instructions, role overrides and unrelated extensions; preserving them does not establish compatibility. Existing extra keys inside managed role objects remain because JSON merging is recursive. The personal helper also installs `~/.pi/agent/pi-setup-env.sh` and adds one managed source block to `~/.bashrc`, with a backup. Corporate shell settings are not changed. Start a new Bash shell, or source that file, before launching Pi so memory-search settings take effect.
 
 For a preview/fixture targeting another home directory, use `--home /path/to/home`. This only changes configuration destinations; the install script uses the actual user environment. The helper does not make a multi-file atomic transaction; its backups support recovery if a write fails.
 
@@ -148,13 +157,17 @@ Playwright is configured as a lazy local MCP server using `npx -y @playwright/mc
 
 `approveTools: false` removes adapter tool approvals, `directTools: false` keeps discovery behind the `mcp` gateway, and `hostConfigDiscovery: off` prevents accidental import of another agent's MCP configuration. Pi 1.0's built-in MCP also registers `/mcp`; the template explicitly disables it with `"extensions": ["-builtin:mcp"]` so only the configured adapter owns that command. Do not enable both without choosing which server configuration to use. Lazy startup avoids paying server startup cost for tasks that never use them.
 
-Web Access exposes `web_search`, `fetch_content`, `get_search_content`, and `source_check`; available search backends can have different account/API requirements. The original setup's keyless search and page extraction were tested; no API secrets are included here.
+Web Access exposes `web_search`, `fetch_content`, `get_search_content`, and `source_check`; available search backends can have different account/API requirements. Public page extraction and Codex-backed search were tested on the configured account; no API secrets are included here. Web Access 0.37 starts with `web_enable`: invoke it to expose the research tools when they are not yet listed. Subagents similarly exposes `subagents_enable` before its `subagent` tool. These are lazy-tool activation helpers, not approval prompts.
 
 ### 6. Optional per-project and memory features
 
 Ponytail defaults to `full`; `/ponytail lite` lets the agent suggest the simpler alternative without enforcing it, while `/ponytail off` disables its guidance for the session. Its extension adds `/ponytail-review`, `/ponytail-audit`, `/ponytail-debt`, `/ponytail-gain` and `/ponytail-help`. Parent extensions are not assumed to be inherited by subagents, so do not assume the Ponytail rules are injected into every child. Existing project skills, design guidance, AGENTS.md and specifications remain authoritative. This repo does not bundle the art marketplace's product documents or local Impeccable/Supabase skills.
 
-Pi Memory's normal file tools need no extra backend. Its search feature requires qmd; qmd was **not found on the source PATH** during this capture. Installing Memory does not prove semantic search works. If desired, follow [Pi Memory's qmd setup](https://github.com/jayzeng/pi-memory#optional-enable-search-with-qmd) and validate using `memory_status`. Do not migrate private memories by default.
+Pi Memory's normal file tools need no extra backend. This personal workstation also has **qmd 2.8.3** for keyword and semantic memory search. Install it with `npm install -g @tobilu/qmd@2.8.3`, then run `qmd pull` to download its local models. Memory creates the `pi-memory` collection on session startup; use `qmd embed` after there is content to index. Follow [Pi Memory's qmd setup](https://github.com/jayzeng/pi-memory#optional-enable-search-with-qmd) and validate using `memory_status`.
+
+Models consume several GB and need adequate CPU/RAM. The personal CPU baseline sets `QMD_FORCE_CPU=1` to avoid CUDA compilation probes and `PI_MEMORY_QMD_SEARCH_TIMEOUT_MS=300000`. A warmed semantic search took about 145 seconds on this workstation, so the default 60-second limit was insufficient. Both defaults preserve explicit environment overrides. Use GPU acceleration only after validating it. Keep this backend optional on resource-constrained machines. Do not migrate private memories by default.
+
+OpenWiki is installed twice: `pi install npm:openwiki@0.7.1` loads its Pi extension, and `npm install -g openwiki@0.7.1` provides the CLI. The package installer covers the first; the runtime commands above cover the second. Restart Pi and verify `openwiki_begin`, `openwiki_submit_plan`, `openwiki_next_page`, `openwiki_inspect_page_claims`, `openwiki_submit_page`, and `openwiki_finish` are registered. The Pi host uses the existing model session and lazily starts a local OpenWiki MCP bridge. No second OpenWiki MCP entry or `openwiki integrations install pi` is needed. For a selected repository, load its `openwiki` skill and follow the durable planning/page workflow. Installation does not generate a wiki automatically. See the [OpenWiki instructions](https://github.com/langchain-ai/openwiki#readme).
 
 BTW uses `/btw <question>` for a temporary side conversation. No custom `pi-btw.json` was present; it uses defaults, including the current model unless changed through its UI. Side-thread retention and full Memory behavior have not been exhaustively verified with this stack.
 
@@ -190,19 +203,22 @@ Do not enable Pi Continue alongside ACP. Do not add another auto-continuation en
 
 Use a temporary fixture project for write/tool tests, not production data. Do not start the user's actual implementation objective as a setup test.
 
-- `pi --version` is 1.0.2, `pi list` contains the captured packages, and every managed JSON file parses.
+- `pi --version` is 1.0.4, `pi list` contains the captured packages, and every managed JSON file parses. Compare versions with `inventory.json`; run `npm audit` in `~/.pi/agent/npm` and report findings. This snapshot retains the five OpenWiki-related high-severity findings described above.
 - Restart Pi and confirm no extension-loading errors. A Python/configuration check alone is not runtime validation.
 - Inspect Subagents through its `subagent` tool (`action: "list", capabilities: true`); confirm all seven stock mappings plus Designer/Observer, thinking levels, tools and resolved extension paths. Use its doctor capability to diagnose launch issues when exposed by the installed version.
-- Parent can access Todo, structured questions, `mcp`, web tools, ACP, `subagent`, Memory, Goal and `/ponytail`. `acp_delegate` must not be active; GSD and Bigpowers must not load. `/btw` should register.
+- Parent can access Todo, structured questions, `mcp`, web tools (after `web_enable`), ACP, `subagent` (after `subagents_enable`), Memory, Goal and `/ponytail`. `acp_delegate` must not be active; GSD and Bigpowers must not load. `/btw` should register.
 - Discover MCP tools; CodeGraph responds for an intentionally indexed fixture, and Playwright opens/closes `about:blank`.
 - Fetch a public documentation page and run one small search. Report authentication/backend failures separately.
 - Create, update and complete a disposable Todo in a throwaway session.
 - Launch one bounded scout to read a harmless fixture and return a known marker. Verify native async completion and exit status, not just “launched.” Inspect reviewer capabilities without paying for a full review. Test Designer/Observer only once provider login and model availability are established.
 - In a disposable conversation, test ACP compress/decompress and confirm retrieval of the original text. Do not compress an unrelated user's live work for testing.
 - For Goal X, use a disposable fixture and `/goal-direct`: initially fail a check, repair it, rerun it, record task evidence, and request audited completion. Exercise `/goal-pause` and `/goal-resume` in a separate bounded fixture; only test scheduled waits if you intentionally enable `strictExecutionContract`. Do not claim long-running compatibility based only on tool registration.
+- Check `npm list -g openwiki --depth=0` (the CLI does not implement `--version`), six native Pi wiki tools, and `openwiki_begin` reaching planning in an explicitly selected disposable Git fixture. Do not generate production wikis as an installation test.
+- Check `memory_status` and keyword/semantic/deep search against a disposable memory collection after downloading models. Keep private memories out of test artifacts.
+- Run `python3 -m unittest discover -s tests -v` for portable-template/helper checks.
 - Report changed files, installed/observed versions, exact checks performed, failures, and any account-dependent work still required.
 
-Historical validation on the source workstation before the Goal X swap: zero extension-loader errors; native async scout runs returned the expected marker; MCP/browser/web/Todo and synthetic ACP checks passed. The former `@narumitw/pi-goal` had upstream smoke tests and observed continuation around child work; this evidence **does not validate Pi Goal X**. Goal X still needs a live goal-cycle test in a disposable session. The 0.1.71 ACP drift was observed during the original documentation pass, not separately retested end-to-end.
+On 2026-10-07, fresh SDK sessions passed startup, all nine role mappings, Todo create/update/complete, CodeGraph fixture lookup, Playwright `about:blank` open/close, public fetch/search, synthetic ACP compression and original-text restoration, and native async scout completion. A Gemini Observer read a disposable red-square PNG and completed successfully. A bounded Goal X fixture first failed an unchanged check, repaired its input, passed the same check, recorded task evidence and received independent audit approval; pause/resume was exercised in that fixture. These are bounded live checks, not proof of unlimited autonomous operation, new-account entitlement, or every UI command. Full BTW retention and Designer UI implementation were not tested. Disposable Memory keyword, semantic and deep searches returned the known marker, with the CPU timeout raised to 300 seconds. All six OpenWiki tools loaded without extension errors; its native bridge reached planning in a disposable Git fixture, and the global CLI integration-list command passed. Full wiki generation was not tested.
 
 ## Troubleshooting
 
@@ -219,7 +235,7 @@ Historical validation on the source workstation before the Goal X swap: zero ext
 | Gemini missing/auth failure | `/login antigravity`, `/antigravity.doctor`, inspect exact model catalog |
 | CodeGraph spawn fails | Check inherited PATH and external CLI installation |
 | Playwright browser missing | Install the browser compatible with the actual MCP server version |
-| Memory search unavailable | qmd is optional and absent in the captured baseline; check `memory_status` |
+| Memory search unavailable | Check qmd PATH, model downloads, `qmd embed` and `memory_status`; qmd remains optional |
 | Duplicate prompts or competing loops | Disable extra continuation/delegation packages; retain one owner per responsibility |
 | Unexpected model/agent settings | Inspect project-local settings, custom agent files and retained override keys |
 | Changes not picked up | `/reload` or restart after work finishes; already-running children keep launch configuration |
@@ -368,9 +384,9 @@ Inspect the supplied images and report concrete visual findings relevant to the 
   "enableSkillCommands": true,
   "extensions": ["-builtin:mcp"],
   "packages": [
-    "npm:pi-mcp-adapter@5.0.0",
-    "npm:pi-web-access@0.35.0",
-    "npm:pi-subagents@0.75.0",
+    "npm:pi-mcp-adapter@5.1.0",
+    "npm:pi-web-access@0.37.0",
+    "npm:pi-subagents@0.76.1",
     "npm:@juicesharp/rpiv-ask-user-question@2.12.0",
     "npm:@juicesharp/rpiv-todo@2.12.0",
     "npm:pi-lens@4.3.0",
@@ -383,7 +399,8 @@ Inspect the supplied images and report concrete visual findings relevant to the 
       "extensions": []
     },
     "npm:pi-goal-x@0.32.3",
-    "git:github.com/DietrichGebert/ponytail@v4.10.3"
+    "npm:openwiki@0.7.1",
+    "git:github.com/DietrichGebert/ponytail@v4.13.0"
   ],
   "defaultThinkingLevel": "medium",
   "subagents": {
@@ -501,7 +518,8 @@ Inspect the supplied images and report concrete visual findings relevant to the 
           "compress",
           "decompress",
           "search_context",
-          "acp_status"
+          "acp_status",
+          "watchdog_diff"
         ],
         "completionGuard": false,
         "output": false
@@ -562,6 +580,25 @@ Inspect the supplied images and report concrete visual findings relevant to the 
 }
 ```
 
+### npm dependency overrides (`config/npm-overrides.json`)
+
+The personal install helper merges these keys into the `overrides` field of `~/.pi/agent/npm/package.json`, then runs `npm install --ignore-scripts`. For manual installation, use the same npm overrides after installing the packages:
+
+```json
+{
+  "@modelcontextprotocol/client": "2.3.1",
+  "@modelcontextprotocol/core": "2.3.1",
+  "@modelcontextprotocol/sdk": "1.32.1"
+}
+```
+
+```bash
+cd ~/.pi/agent/npm
+npm pkg set overrides.@modelcontextprotocol/client=2.3.1 overrides.@modelcontextprotocol/core=2.3.1 overrides.@modelcontextprotocol/sdk=1.32.1
+npm install --ignore-scripts
+npm audit
+```
+
 ### `~/.pi/acp.json`
 
 ```json
@@ -613,6 +650,23 @@ Inspect the supplied images and report concrete visual findings relevant to the 
 }
 ```
 
+### `~/.pi/agent/pi-setup-env.sh` and personal Bash startup
+
+```bash
+# Personal Linux CPU baseline. Source this before starting Pi.
+# Set either variable before sourcing to retain a deliberate override.
+export QMD_FORCE_CPU="${QMD_FORCE_CPU:-1}"
+export PI_MEMORY_QMD_SEARCH_TIMEOUT_MS="${PI_MEMORY_QMD_SEARCH_TIMEOUT_MS:-300000}"
+```
+
+The helper adds a backed-up, idempotent source block to `~/.bashrc`. For manual installation, add:
+
+```bash
+[ ! -f "$HOME/.pi/agent/pi-setup-env.sh" ] || . "$HOME/.pi/agent/pi-setup-env.sh"
+```
+
+Non-Bash shells, desktop launchers, services and direct SDK callers must source this file or pass the two environment variables explicitly. Existing Pi processes do not receive environment changes.
+
 ## Upstream references
 
 These links document the package behavior; the local snapshot and pinned templates define this setup. Recheck upstream when upgrading.
@@ -631,7 +685,17 @@ These links document the package behavior; the local snapshot and pinned templat
 - [Pi Continue (inactive)](https://github.com/Tiziano-AI/pi-continue)
 - [CodeGraph](https://github.com/colbymchenry/codegraph)
 - [Playwright MCP](https://github.com/microsoft/playwright-mcp)
+- [OpenWiki](https://github.com/langchain-ai/openwiki)
+- [qmd](https://github.com/tobi/qmd)
 
 ## Repository validation record
 
-On 2026-09-19, the configuration helper was exercised against a temporary home directory, including a path containing spaces. Fresh application, repeated application, preservation of unrelated settings/packages and global guidance, replacement of managed package versions, activation filters, absolute-path substitution, and backup manifests passed. All JSON templates and JSON Markdown blocks parsed; the appendix matched every configuration template. A basic known-token/private-key and source-home-path scan passed. The package installation helper was previewed, not executed against a second workstation; Ponytail installation and GSD/Bigpowers removal were performed on the source machine on 2026-10-04. After upgrading Pi to 1.0.2, Subagents 0.75.0 completed a fresh headless scout launch against a temporary marker file; Pi startup emitted none of the reported MCP/TypeBox warnings. On 2026-10-04, five package upgrades and MCP adapter config migration were applied; a fresh headless Pi RPC session loaded extensions without startup errors, and adapter 5's doctor found CodeGraph and Playwright healthy. No credentials, memory files, session history or project data were copied. These checks establish configuration portability and bounded startup/MCP behavior, not exhaustive authenticated behavior on a new account.
+On 2026-10-07, the personal installation helper was executed on the source workstation with the latest pins and patched MCP overrides. Reapplying configuration preserved activation filters and role mappings. After the overrides, fresh MCP/browser/fetch/ACP and native async scout checks passed again. The MCP advisories were resolved; adding OpenWiki then produced the five unresolved high-severity findings documented above. OpenWiki's six tools and native planning bridge passed a disposable fixture check. Memory keyword/semantic/deep searches passed with the recorded CPU settings. A fresh native async Reviewer inspected the final diff and reported no actionable issues after its required diff tool was restored. The parent ran all eleven offline regression tests successfully; active LSP diagnostics found no issues across the seven changed Python/JSON/shell files. The tests cover fresh/repeated application, a home path containing spaces, unrelated-settings preservation, retired packages, credential-file exclusion, legacy adapter migration, personal npm backups/overrides, idempotent shell-environment setup, corporate isolation and Markdown/template/inventory agreement.
+
+Run the offline regression tests before committing configuration changes:
+
+```bash
+python3 -m unittest discover -s tests -v
+```
+
+The corporate profile was not deployed or upgraded in this personal update. No credentials, memory files, session history or production project data were copied into this repository. Runtime tests used temporary fixtures and existing account authentication; they do not establish entitlement on a new account.

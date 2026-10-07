@@ -5,6 +5,7 @@ import copy
 import datetime
 import json
 from pathlib import Path
+import shlex
 import shutil
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -89,6 +90,15 @@ def main():
                 original = original.split(start, 1)[0] + original.split(end, 1)[1]
             text = original.rstrip() + '\n\n' + start + '\n' + text.rstrip() + '\n' + end + '\n'
         plan.append((dest, text))
+    if args.profile == 'personal':
+        shell = home / '.bashrc'
+        start, end = '# pi-setup:environment:start', '# pi-setup:environment:end'
+        original = shell.read_text() if shell.exists() else ''
+        if start in original and end in original:
+            original = original.split(start, 1)[0] + original.split(end, 1)[1]
+        env_path = shlex.quote(str(agent / 'pi-setup-env.sh'))
+        text = original.rstrip() + '\n\n' + start + f'\n[ ! -f {env_path} ] || . {env_path}\n' + end + '\n'
+        plan.append((shell, text))
     backup = agent / 'backups' / ('pi-setup-' + datetime.datetime.now().strftime('%Y%m%d-%H%M%S-%f'))
     manifest = []
     for dest, text in plan:

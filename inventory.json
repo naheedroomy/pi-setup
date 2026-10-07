@@ -1,28 +1,36 @@
 {
-  "captured": "2026-10-04",
-  "pi": "1.0.2",
+  "captured": "2026-10-07",
+  "pi": "1.0.4",
   "node": "24.21.0",
-  "codegraph": "1.6.0",
+  "npm": "11.19.0",
+  "codegraph": "1.6.2",
+  "qmd": "2.8.3",
+  "openwikiCli": "0.7.1",
+  "npmOverrides": {
+    "@modelcontextprotocol/client": "2.3.1",
+    "@modelcontextprotocol/core": "2.3.1",
+    "@modelcontextprotocol/sdk": "1.32.1"
+  },
   "packages": [
     {
       "name": "pi-mcp-adapter",
-      "configuredSource": "npm:pi-mcp-adapter@5.0.0",
-      "installedVersion": "5.0.0",
-      "portableSource": "npm:pi-mcp-adapter@5.0.0",
+      "configuredSource": "npm:pi-mcp-adapter@5.1.0",
+      "installedVersion": "5.1.0",
+      "portableSource": "npm:pi-mcp-adapter@5.1.0",
       "extensionsEnabled": true
     },
     {
       "name": "pi-web-access",
-      "configuredSource": "npm:pi-web-access@0.35.0",
-      "installedVersion": "0.35.0",
-      "portableSource": "npm:pi-web-access@0.35.0",
+      "configuredSource": "npm:pi-web-access@0.37.0",
+      "installedVersion": "0.37.0",
+      "portableSource": "npm:pi-web-access@0.37.0",
       "extensionsEnabled": true
     },
     {
       "name": "pi-subagents",
-      "configuredSource": "npm:pi-subagents@0.75.0",
-      "installedVersion": "0.75.0",
-      "portableSource": "npm:pi-subagents@0.75.0",
+      "configuredSource": "npm:pi-subagents@0.76.1",
+      "installedVersion": "0.76.1",
+      "portableSource": "npm:pi-subagents@0.76.1",
       "extensionsEnabled": true
     },
     {
@@ -62,7 +70,7 @@
     },
     {
       "name": "pi-memory",
-      "configuredSource": "npm:pi-memory",
+      "configuredSource": "npm:pi-memory@0.4.2",
       "installedVersion": "0.4.2",
       "portableSource": "npm:pi-memory@0.4.2",
       "extensionsEnabled": true
@@ -89,10 +97,17 @@
       "extensionsEnabled": true
     },
     {
+      "name": "openwiki",
+      "configuredSource": "npm:openwiki@0.7.1",
+      "installedVersion": "0.7.1",
+      "portableSource": "npm:openwiki@0.7.1",
+      "extensionsEnabled": true
+    },
+    {
       "name": "ponytail",
-      "configuredSource": "git:github.com/DietrichGebert/ponytail@v4.10.3",
-      "installedVersion": "4.10.3",
-      "portableSource": "git:github.com/DietrichGebert/ponytail@v4.10.3",
+      "configuredSource": "git:github.com/DietrichGebert/ponytail@v4.13.0",
+      "installedVersion": "4.13.0",
+      "portableSource": "git:github.com/DietrichGebert/ponytail@v4.13.0",
       "extensionsEnabled": true
     }
   ]
